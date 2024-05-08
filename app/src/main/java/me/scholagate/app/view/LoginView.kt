@@ -10,13 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import me.scholagate.app.StoreCredenciales
 import me.scholagate.app.components.MainTitle
+import me.scholagate.app.viewModel.ScholaGateViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginView(
     navController: NavHostController,
+    scholaGateViewModel: ScholaGateViewModel,
+    storeCredenciales: StoreCredenciales,
 
 
     ){
@@ -25,7 +29,7 @@ fun LoginView(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { MainTitle(title = "Creating QRCode", color = MaterialTheme.colorScheme.onPrimary ) },
+            TopAppBar(title = { MainTitle(title = "Test Login", color = MaterialTheme.colorScheme.onPrimary ) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceTint
                 ),

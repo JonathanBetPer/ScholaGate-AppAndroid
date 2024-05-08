@@ -4,28 +4,29 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import me.scholagate.app.StoreCredenciales
 import me.scholagate.app.view.*
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
 @Composable
-fun NavManager(scholaGateViewModel: ScholaGateViewModel) {
+fun NavManager(scholaGateViewModel: ScholaGateViewModel, storeCredenciales: StoreCredenciales) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "Login"){
         composable("Login"){
-            LoginView(navController)
+            LoginView(navController, scholaGateViewModel, storeCredenciales)
         }
         composable("Home"){
-            HomeView(navController)
+            HomeView(navController, scholaGateViewModel)
         }
         composable("Registro"){
-            RegistroView(navController)
+            RegistroView(navController, scholaGateViewModel)
         }
         composable("Validacion"){
-            ValidacionView(navController)
+            ValidacionView(navController, scholaGateViewModel)
         }
         composable("WriteNFC"){
-            WriteNFCView(navController)
+            WriteNFCView(navController, scholaGateViewModel)
         }
     }
 }

@@ -19,6 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val scholaGateViewModel: ScholaGateViewModel by viewModels()
+        val storeCredenciales = StoreCredenciales(this)
 
         setContent {
             ScholaGateTheme {
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavManager( scholaGateViewModel )
+                    NavManager( scholaGateViewModel, storeCredenciales )
                 }
             }
         }

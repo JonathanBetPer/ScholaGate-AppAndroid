@@ -11,14 +11,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import me.scholagate.app.components.MainTitle
+import me.scholagate.app.viewModel.ScholaGateViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView(
     navController: NavHostController,
+    scholaGateViewModel: ScholaGateViewModel,
 
 
-){
+    ){
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
