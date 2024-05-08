@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ScholaGate"
+rootProject.name = "App"
 include(":app")
  
