@@ -1,6 +1,7 @@
 package me.scholagate.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -11,6 +12,10 @@ import me.scholagate.app.viewModel.ScholaGateViewModel
 @Composable
 fun NavManager(scholaGateViewModel: ScholaGateViewModel, storeCredenciales: StoreCredenciales) {
     val navController = rememberNavController()
+
+    val startDestination = if (scholaGateViewModel.tokenCorrecto()) "Home" else "Login"
+
+
 
     NavHost(navController = navController, startDestination = "Login"){
         composable("Login"){

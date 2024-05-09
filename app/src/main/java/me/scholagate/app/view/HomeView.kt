@@ -48,7 +48,6 @@ fun HomeView(
 @Composable
 fun ContentHome(pad: PaddingValues) {
 
-
 }
 
 

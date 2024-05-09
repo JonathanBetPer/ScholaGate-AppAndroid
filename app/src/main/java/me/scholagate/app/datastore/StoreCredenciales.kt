@@ -37,4 +37,9 @@ class StoreCredenciales (private val context: Context){
         context.dataStore.edit { preferences ->
             preferences[PASSWORD]=password }
     }
+
+    suspend fun guardarCredenciales(username: String, password: String) {
+        saveEmail(username)
+        savePassword(password)
+    }
 }

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +24,8 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import me.scholagate.app.R
 
 @Composable
 fun SpaceV(size: Dp = 5.dp){
@@ -74,7 +79,7 @@ fun MainIconButton(icon: ImageVector, description: String, tint: Color, onClick:
 fun TextFieldGenerico(value: String, onValueChange: (String) -> Unit, label: String) {
     OutlinedTextField(
         value = value,
-        minLines = 3,
+        minLines = 1,
         onValueChange = onValueChange,
         label = { Text(text = label) },
         modifier = Modifier
@@ -84,3 +89,20 @@ fun TextFieldGenerico(value: String, onValueChange: (String) -> Unit, label: Str
     )
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBarLogo(){
+    TopAppBar(title = { ImageVector.vectorResource(id = R.drawable.ic_launcher_foreground) },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        actions = {
+        }
+    )
+}
+
+@Composable
+fun CheckBoxLogIn( checked: Boolean, onCheckedChange: (Boolean) -> Unit){
+
+}
