@@ -7,10 +7,11 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import me.scholagate.app.dtos.Credenciales
-import me.scholagate.app.model.Credenciales
 import me.scholagate.app.navigation.NavManager
 import me.scholagate.app.ui.theme.ScholaGateTheme
 import me.scholagate.app.viewModel.ScholaGateViewModel
@@ -21,15 +22,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val scholaGateViewModel: ScholaGateViewModel by viewModels()
-        val storeCredenciales = StoreCredenciales(this)
-
-        scholaGateViewModel.onValueCredenciales(
-            Credenciales( storeCredenciales.getEmail.toString(),
-                storeCredenciales.getPassword.toString()
-            )
-        )
 
         setContent {
+
+            val storeCredenciales = StoreCredenciales(this)
+
+            scholaGateViewModel.onValueCredenciales(
+                Credenciales(
+                    storeCredenciales.getEmail.collectAsState(initial = "").value,
+                    storeCredenciales.getPassword.collectAsState(initial = "").value
+                )
+            )
+
             ScholaGateTheme {
 
                 Surface(
