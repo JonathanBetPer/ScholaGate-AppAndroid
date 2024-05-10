@@ -1,6 +1,6 @@
 package me.scholagate.app.data
 
-import me.scholagate.app.model.Credenciales
+import me.scholagate.app.dtos.Credenciales
 import me.scholagate.app.dtos.AdjuntoDto
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.dtos.ReporteDto
@@ -11,7 +11,6 @@ import me.scholagate.app.utils.Constants.Companion.ENDPOINT_ALUMNOS
 import me.scholagate.app.utils.Constants.Companion.ENDPOINT_LOGIN
 import me.scholagate.app.utils.Constants.Companion.ENDPOINT_REPORTE
 import me.scholagate.app.utils.Constants.Companion.ENDPOINT_USUARIO
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -32,7 +31,7 @@ interface ScholaGateAPI {
 
 
     @POST(ENDPOINT_LOGIN)
-    suspend fun  login(@Body credenciales: Credenciales): Response<ResponseBody>
+    suspend fun  login(@Body credenciales: Credenciales): Response<String>
 
     @POST(ENDPOINT_REPORTE)
     suspend fun  postReporte(@Header("Authorization") token: String, @Body reporteDto: ReporteDto): Response<ReporteDto>

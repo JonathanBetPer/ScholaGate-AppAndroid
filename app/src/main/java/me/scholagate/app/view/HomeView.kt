@@ -18,8 +18,6 @@ import me.scholagate.app.viewModel.ScholaGateViewModel
 fun HomeView(
     navController: NavHostController,
     scholaGateViewModel: ScholaGateViewModel,
-
-
     ){
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

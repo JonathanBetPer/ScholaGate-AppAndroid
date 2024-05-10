@@ -1,13 +1,12 @@
 package me.scholagate.app.repository
 
 import android.util.Log
-import me.scholagate.app.model.Credenciales
+import me.scholagate.app.dtos.Credenciales
 import me.scholagate.app.data.ScholaGateAPI
 import me.scholagate.app.dtos.AdjuntoDto
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.dtos.ReporteDto
 import me.scholagate.app.dtos.UsuarioDto
-import me.scholagate.app.model.Usuario
 import javax.inject.Inject
 
 class SGRepository @Inject constructor(
@@ -31,15 +30,6 @@ class SGRepository @Inject constructor(
         val response = api.getUsuario( token )
 
         if (response.isSuccessful) {
-
-            var usuario = response.body()?.let {
-                Usuario(
-                    it.id,
-                    it.nombre,
-                    it.correo,
-                    it.rol
-                )
-            }
 
             return response.body()
         } else {

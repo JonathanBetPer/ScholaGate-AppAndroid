@@ -1,4 +1,4 @@
-package com.example.myapplication.network
+package me.scholagate.app.network
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class NetworkConnectivityServiceImpl @Inject constructor (
     context: Context
-): NetworkConnectivityService  {
+): NetworkConnectivityService {
 
     private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

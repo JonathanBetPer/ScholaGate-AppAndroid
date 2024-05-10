@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import me.scholagate.app.StoreCredenciales
 import me.scholagate.app.components.TextFieldGenerico
 import me.scholagate.app.components.TopBarLogo
+import me.scholagate.app.dtos.Credenciales
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
 
@@ -54,13 +55,20 @@ fun ContentLogin(
     scope: CoroutineScope,
     navController: NavHostController
 ) {
-    val username = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+    val credenciales = scholaGateViewModel._credenciales
+
+    val username = remember { mutableStateOf(credenciales.nombreUsuario) }
+    val password = remember { mutableStateOf(credenciales.password) }
     val guardarCredenciales = remember { mutableStateOf(false) }
 
     Column(Modifier.padding(pad)){
-        TextFieldGenerico(value = username.value, onValueChange = {username.value = it}, label ="Correo electrónico")
-        TextFieldGenerico(value = password.value, onValueChange = {password.value = it}, label ="Contraseña")
+        TextFieldGenerico(value = username.value,
+                        onValueChange = {username.value = it},
+                        label ="Correo electrónico"
+        )
+        TextFieldGenerico(value = password.value,
+            onValueChange = {password.value = it},
+            label ="Contraseña")
 
         Checkbox(
             checked = guardarCredenciales.value,
@@ -73,7 +81,7 @@ fun ContentLogin(
 
             if (guardarCredenciales.value) {
                 scope.launch {
-                    storeCredenciales.guardarCredenciales(username.value, password.value)
+                    storeCredenciales.guardarCredenciales(Credenciales(username.value, password.value))
                 }
             }
 

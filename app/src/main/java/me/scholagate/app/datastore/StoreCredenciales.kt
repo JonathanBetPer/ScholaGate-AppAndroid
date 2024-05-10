@@ -1,4 +1,4 @@
-package me.scholagate.app;
+package me.scholagate.app
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -8,10 +8,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import me.scholagate.app.dtos.Credenciales
 
-/**
- *
- */
 class StoreCredenciales (private val context: Context){
 
     companion object {
@@ -28,18 +26,19 @@ class StoreCredenciales (private val context: Context){
                 preferences[PASSWORD]?:""
             }
 
-    suspend fun saveEmail(email:String){
+    private suspend fun saveEmail(email:String){
         context.dataStore.edit { preferences ->
             preferences[EMAIL]=email }
     }
 
-    suspend fun savePassword(password:String){
+    private suspend fun savePassword(password:String){
         context.dataStore.edit { preferences ->
             preferences[PASSWORD]=password }
     }
 
-    suspend fun guardarCredenciales(username: String, password: String) {
-        saveEmail(username)
-        savePassword(password)
+    suspend fun guardarCredenciales(credeciales: Credenciales) {
+        saveEmail(credeciales.nombreUsuario)
+        savePassword(credeciales.password)
     }
+
 }
