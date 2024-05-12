@@ -106,14 +106,14 @@ class ScholaGateViewModel @Inject constructor(
 
     fun fetchLogin(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.login(email, password)
-            _token = result ?: ""
+            val result = repository.login(email.trim(), password.trim())
+            _token = result?:""
         }
     }
 
-    fun fetchUsuario(token: String) {
+    fun fetchUsuario() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.getUsurarioActual(token)
+            val result = repository.getUsurarioActual(_token)
             if (result != null) {
                 _usuario = result
             } else {
@@ -122,9 +122,9 @@ class ScholaGateViewModel @Inject constructor(
         }
     }
 
-    fun fetchReporte(token: String, reporteDto: ReporteDto) {
+    fun fetchReporte(reporteDto: ReporteDto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.postReporte(token, reporteDto)
+            val result = repository.postReporte(_token, reporteDto)
             if (result != null) {
                 _reporte = result
             } else {
@@ -133,9 +133,9 @@ class ScholaGateViewModel @Inject constructor(
         }
     }
 
-    fun fetchAdjunto(token: String, adjuntoDto: AdjuntoDto) {
+    fun fetchAdjunto(adjuntoDto: AdjuntoDto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.postAdjunto(token, adjuntoDto)
+            val result = repository.postAdjunto(_token, adjuntoDto)
             if (result != null) {
                 _adjunto = result
             } else {
@@ -144,9 +144,9 @@ class ScholaGateViewModel @Inject constructor(
         }
     }
 
-    fun fetchAlumno(token: String, id: Int) {
+    fun fetchAlumno(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.getAlumno(token, id)
+            val result = repository.getAlumno(_token, id)
             if (result != null) {
                 _alumno = result
             } else {
@@ -155,9 +155,9 @@ class ScholaGateViewModel @Inject constructor(
         }
     }
 
-    fun fetchAlumnos(token: String) {
+    fun fetchAlumnos() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.getAlumnos(token)
+            val result = repository.getAlumnos(_token)
             if (result != null) {
                 _listaAlumnos = result
             } else {

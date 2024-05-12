@@ -4,6 +4,7 @@ import me.scholagate.app.dtos.Credenciales
 import me.scholagate.app.dtos.AdjuntoDto
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.dtos.ReporteDto
+import me.scholagate.app.dtos.TokenDto
 import me.scholagate.app.dtos.UsuarioDto
 import me.scholagate.app.utils.Constants.Companion.ENDPOINT_ADJUNTO
 import me.scholagate.app.utils.Constants.Companion.ENDPOINT_ALUMNO
@@ -31,7 +32,7 @@ interface ScholaGateAPI {
 
 
     @POST(ENDPOINT_LOGIN)
-    suspend fun  login(@Body credenciales: Credenciales): Response<String>
+    suspend fun  login(@Body credenciales: Credenciales): Response<TokenDto>
 
     @POST(ENDPOINT_REPORTE)
     suspend fun  postReporte(@Header("Authorization") token: String, @Body reporteDto: ReporteDto): Response<ReporteDto>

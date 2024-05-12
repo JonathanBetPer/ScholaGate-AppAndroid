@@ -15,13 +15,15 @@ fun NavManager(scholaGateViewModel: ScholaGateViewModel, storeCredenciales: Stor
 
     val startDestination = if (scholaGateViewModel.tokenCorrecto()) "Home" else "Login"
 
-
-
-    NavHost(navController = navController, startDestination = "Login"){
+    NavHost(navController = navController, startDestination = startDestination){
         composable("Login"){
             LoginView(navController, scholaGateViewModel, storeCredenciales)
         }
         composable("Home"){
+
+            scholaGateViewModel.fetchUsuario()
+
+
             HomeView(navController, scholaGateViewModel)
         }
         composable("Registro"){

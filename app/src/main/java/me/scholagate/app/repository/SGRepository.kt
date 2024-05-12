@@ -13,14 +13,20 @@ class SGRepository @Inject constructor(
     private val api: ScholaGateAPI
 )   {
     suspend fun login(email: String, password: String): String? {
+        try {
+            val responseApi = api.login( Credenciales(email, password) )
 
-        val response = api.login( Credenciales(email, password) )
+            if (responseApi.isSuccessful){
+                Log.d("SGRepository - Login","Success fetching data ${responseApi.body()?.token}")
+                return responseApi.body()?.token
+            }
+            else{
+                Log.e("SGRepository - Login","Error fetching data: ${responseApi.message()}")
+            }
 
-        if (response.isSuccessful) {
-            return response.body().toString()
-        } else {
-            // Log error
-            Log.e("SGRepository", "login: ${response.errorBody().toString()}")
+        } catch (e: Exception) {
+            Log.e("SGRepository - Login","Exception fetching data:")
+            e.printStackTrace()
         }
         return null
     }
@@ -34,7 +40,7 @@ class SGRepository @Inject constructor(
             return response.body()
         } else {
             // Log error
-            Log.e("SGRepository", "register: ${response.errorBody().toString()}")
+            Log.e("SGRepository", "getUsuario: ${response.message()}")
         }
         return null
     }
@@ -47,7 +53,7 @@ class SGRepository @Inject constructor(
             return response.body()
         } else {
             // Log error
-            Log.e("SGRepository", "getAlumno: ${response.errorBody().toString()}")
+            Log.e("SGRepository", "getAlumno: ${response.message()}")
         }
         return null
     }
@@ -60,7 +66,7 @@ class SGRepository @Inject constructor(
             return response.body()
         } else {
             // Log error
-            Log.e("SGRepository", "getAlumnos: ${response.errorBody().toString()}")
+            Log.e("SGRepository", "getAlumnos: ${response.message()}")
         }
         return null
     }
@@ -74,7 +80,7 @@ class SGRepository @Inject constructor(
             return response.body()
         } else {
             // Log error
-            Log.e("SGRepository", "postReporte: ${response.errorBody().toString()}")
+            Log.e("SGRepository", "postReporte: ${response.message()}")
         }
         return null
     }
@@ -87,9 +93,10 @@ class SGRepository @Inject constructor(
             return response.body()
         } else {
             // Log error
-            Log.e("SGRepository", "postAdjunto: ${response.errorBody().toString()}")
+            Log.e("SGRepository", "postAdjunto: ${response.message()}")
         }
         return null
     }
+
 
 }
