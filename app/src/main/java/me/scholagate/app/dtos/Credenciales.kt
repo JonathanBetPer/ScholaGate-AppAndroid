@@ -1,6 +1,6 @@
 package me.scholagate.app.dtos
 
 data class Credenciales(
-    val nombreUsuario: String = "",
-    val password: String = ""
+    var nombreUsuario: String = "",
+    var password: String = ""
 )

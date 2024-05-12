@@ -6,19 +6,11 @@ data class AlumnoDto(
     val id: Int = -1,
     val idGrupo: Int = -1,
     val nombre: String = "",
-    val fechaNac: LocalDate = LocalDate.now(),
-    val foto: ByteArray = byteArrayOf()
+    val fechaNac: String = "",
+    val foto: String = ""
 ){
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as AlumnoDto
-
-        return foto.contentEquals(other.foto)
-    }
-
-    override fun hashCode(): Int {
-        return foto.contentHashCode()
+    fun isMayorDeEdad(): Boolean {
+        val fechaNac = LocalDate.parse(fechaNac)
+        return LocalDate.now().year - fechaNac.year >= 18
     }
 }

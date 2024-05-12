@@ -17,7 +17,6 @@ class SGRepository @Inject constructor(
             val responseApi = api.login( Credenciales(email, password) )
 
             if (responseApi.isSuccessful){
-                Log.d("SGRepository - Login","Success fetching data ${responseApi.body()?.token}")
                 return responseApi.body()?.token
             }
             else{
@@ -32,41 +31,60 @@ class SGRepository @Inject constructor(
     }
 
     suspend fun getUsurarioActual(token: String): UsuarioDto? {
+        try {
+            val responseApi =  api.getUsuario("Bearer $token")
 
-        val response = api.getUsuario( token )
+            if (responseApi.isSuccessful){
+                Log.d("SGRepository - getUser","Success fetching data, user with id: ${responseApi.body()?.id}")
+                return responseApi.body()
+            }
+            else{
+                Log.e("SGRepository - getUser","Error fetching data: ${responseApi.message()}")
+            }
 
-        if (response.isSuccessful) {
-
-            return response.body()
-        } else {
-            // Log error
-            Log.e("SGRepository", "getUsuario: ${response.message()}")
+        } catch (e: Exception) {
+            Log.e("SGRepository - getUser","Exception fetching data:")
+            e.printStackTrace()
         }
         return null
     }
 
     suspend fun getAlumno(token: String, id: Int): AlumnoDto? {
 
-        val response = api.getAlumno(token, id)
+        try {
+            val responseApi =  api.getAlumno("Bearer $token", id)
 
-        if (response.isSuccessful) {
-            return response.body()
-        } else {
-            // Log error
-            Log.e("SGRepository", "getAlumno: ${response.message()}")
+            if (responseApi.isSuccessful){
+                Log.d("SGRepository - getAlumno","Success fetching data, alumno with id: ${responseApi.body()?.id}")
+                return responseApi.body()
+            }
+            else{
+                Log.e("SGRepository - getAlumno","Error fetching data: ${responseApi.message()}")
+            }
+
+        } catch (e: Exception) {
+            Log.e("SGRepository - getAlumno","Exception fetching data:")
+            e.printStackTrace()
         }
         return null
     }
 
     suspend fun getAlumnos(token: String): List<AlumnoDto>? {
 
-        val response = api.getAlumnos(token)
+        try {
+            val responseApi =  api.getAlumnos("Bearer $token")
 
-        if (response.isSuccessful) {
-            return response.body()
-        } else {
-            // Log error
-            Log.e("SGRepository", "getAlumnos: ${response.message()}")
+            if (responseApi.isSuccessful){
+                Log.d("SGRepository - getAlumnos","Success fetching data: ${responseApi.body()}")
+                return responseApi.body()
+            }
+            else{
+                Log.e("SGRepository - getAlumnos","Error fetching data: ${responseApi.message()}")
+            }
+
+        } catch (e: Exception) {
+            Log.e("SGRepository - getAlumnos","Exception fetching data:")
+            e.printStackTrace()
         }
         return null
     }

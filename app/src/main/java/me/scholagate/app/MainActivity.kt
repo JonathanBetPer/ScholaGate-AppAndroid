@@ -25,23 +25,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            val storeCredenciales = StoreCredenciales(this)
-
-            scholaGateViewModel.onValueCredenciales(
-                Credenciales(
-                    storeCredenciales.getEmail.collectAsState(initial = "").value,
-                    storeCredenciales.getPassword.collectAsState(initial = "").value
-                )
-            )
-
             ScholaGateTheme {
 
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    NavManager( scholaGateViewModel, storeCredenciales )
-                }
+
+                    NavManager( scholaGateViewModel)
+                
             }
         }
     }

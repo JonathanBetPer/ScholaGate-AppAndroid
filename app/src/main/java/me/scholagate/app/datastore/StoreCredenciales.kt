@@ -41,4 +41,9 @@ class StoreCredenciales (private val context: Context){
         savePassword(credeciales.password)
     }
 
+    suspend fun borrarCredenciales(){
+        saveEmail("")
+        savePassword("")
+    }
+
 }

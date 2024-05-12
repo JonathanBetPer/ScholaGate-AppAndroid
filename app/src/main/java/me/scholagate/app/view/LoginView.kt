@@ -1,16 +1,20 @@
 package me.scholagate.app.view
 
+import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,14 +26,16 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.scholagate.app.StoreCredenciales
+import me.scholagate.app.components.CheckBoxLogIn
 import me.scholagate.app.components.PasswordField
+import me.scholagate.app.components.ShowLoading
+import me.scholagate.app.components.SpaceV
 import me.scholagate.app.components.TextFieldGenerico
 import me.scholagate.app.components.TopBarLogo
 import me.scholagate.app.dtos.Credenciales
+import me.scholagate.app.states.LoginState
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginView(
     navController: NavHostController,
@@ -39,14 +45,45 @@ fun LoginView(
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val uiLoginViewState by scholaGateViewModel.uiLoginViewState.collectAsState()
 
     Scaffold(
         topBar = {
             TopBarLogo()
         }
     ) {
-        ContentLogin(pad = it, scholaGateViewModel,
-            storeCredenciales, context, scope, navController)
+        val guardarCredenciales = remember { mutableStateOf(false) }
+
+        when (uiLoginViewState.loginState) {
+
+            LoginState.None ->  ContentLogin(
+                pad = it,
+                scholaGateViewModel,
+                storeCredenciales,
+                scope,
+                guardarCredenciales
+            )
+
+            LoginState.Loading -> ShowLoading()
+
+            is LoginState.Error -> {
+                ContentLogin(
+                    pad = it,
+                    scholaGateViewModel,
+                    storeCredenciales,
+                    scope,
+                    guardarCredenciales
+                )
+                Toast.makeText(context, "Inicio de sesión incorrecto", Toast.LENGTH_SHORT).show()
+            }
+
+            is LoginState.Success -> {
+                if (scholaGateViewModel.uiLoginViewState.collectAsState().value.token != ""){
+                    navController.navigate("Home")
+                }
+            }
+        }
+
     }
 }
 
@@ -55,20 +92,20 @@ fun ContentLogin(
     pad: PaddingValues,
     scholaGateViewModel: ScholaGateViewModel,
     storeCredenciales: StoreCredenciales,
-    context: android.content.Context,
     scope: CoroutineScope,
-    navController: NavHostController
+    guardarCredenciales: MutableState<Boolean>
 ) {
-    val credenciales = scholaGateViewModel._credenciales
+    val credenciales = scholaGateViewModel.uiAppState.collectAsState().value.credenciales
 
-    val username = remember { mutableStateOf(credenciales.nombreUsuario) }
-    val password = remember { mutableStateOf(credenciales.password) }
-    val guardarCredenciales = remember { mutableStateOf(false) }
+    val username = remember { mutableStateOf(credenciales?.nombreUsuario ?:"") }
+    val password = remember { mutableStateOf(credenciales?.password?:"")  }
 
     Column(
-        Modifier.padding(pad)
+        Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(pad)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.Center
 
     ){
         TextFieldGenerico(
@@ -77,17 +114,22 @@ fun ContentLogin(
             label ="Correo electrónico",
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+
+        SpaceV(15.dp)
+
         PasswordField(
             password = password.value,
             onValueChange = {password.value = it},
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Checkbox(
+        CheckBoxLogIn(
             checked = guardarCredenciales.value,
-            onCheckedChange = {guardarCredenciales.value = it },
+            onCheckedChange = {guardarCredenciales.value = it},
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+
+        SpaceV(20.dp)
 
         Button(
             content = {
@@ -95,20 +137,14 @@ fun ContentLogin(
             },
             modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
-                scope.launch {
-                    scholaGateViewModel.fetchLogin(username.value, password.value)
+                scholaGateViewModel.fetchLogin(username.value, password.value)
 
-                    if (scholaGateViewModel.tokenCorrecto()){
-                        if (guardarCredenciales.value) {
-                            storeCredenciales.guardarCredenciales(Credenciales(username.value, password.value))
-                        }
-                        navController.navigate("Home")
-                    }
-                    else{
-                        Toast.makeText(context, "Inicio de sesión incorrecto", Toast.LENGTH_SHORT).show()
+                scope.launch {
+                    if (guardarCredenciales.value) {
+                        storeCredenciales.guardarCredenciales(Credenciales(username.value, password.value))
                     }
                 }
-            },
+            }
         )
     }
 }

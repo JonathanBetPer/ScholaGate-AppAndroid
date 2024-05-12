@@ -1,6 +1,7 @@
 package me.scholagate.app.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,16 +10,23 @@ import androidx.lifecycle.viewModelScope
 import me.scholagate.app.network.NetworkConnectivityService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.scholagate.app.StoreCredenciales
 import me.scholagate.app.dtos.AdjuntoDto
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.dtos.Credenciales
 import me.scholagate.app.dtos.ReporteDto
 import me.scholagate.app.dtos.UsuarioDto
 import me.scholagate.app.repository.SGRepository
+import me.scholagate.app.states.AppState
+import me.scholagate.app.states.LoginState
+import me.scholagate.app.states.UiAppState
+import me.scholagate.app.states.UiLoginViewState
 import me.scholagate.app.utils.NetworkStatus
 import javax.inject.Inject
 
@@ -34,6 +42,27 @@ class ScholaGateViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000)
     )
 
+    private val _uiAppState = MutableStateFlow(
+        UiAppState(
+            AppState.Loading,
+            Credenciales(),
+        )
+    )
+    val uiAppState = _uiAppState.asStateFlow()
+
+    fun updateAppState(newAppState: UiAppState) {
+        _uiAppState.value = newAppState
+    }
+
+    private var _uiLoginViewState = MutableStateFlow(
+        UiLoginViewState(
+            LoginState.None,
+            ""
+        )
+    )
+    val uiLoginViewState = _uiLoginViewState.asStateFlow()
+
+
     var _usuario by mutableStateOf(UsuarioDto())
     private set
 
@@ -44,17 +73,6 @@ class ScholaGateViewModel @Inject constructor(
         rol = value.rol
     ) }
 
-
-    var _token by mutableStateOf("")
-    fun onValueToken(value: String) = run { _token = value }
-
-    var _credenciales by mutableStateOf(Credenciales())
-    private set
-
-    fun onValueCredenciales(value: Credenciales) = run { _credenciales = _credenciales.copy(
-        nombreUsuario = value.nombreUsuario,
-        password = value.password
-    ) }
 
     var _reporte by mutableStateOf(ReporteDto())
         private set
@@ -94,37 +112,55 @@ class ScholaGateViewModel @Inject constructor(
 
     ) }
 
-    init {
-        if (_credenciales.nombreUsuario != "" && _credenciales.password != ""){
-            fetchLogin(_credenciales.nombreUsuario, _credenciales.password)
-        }
-    }
+    fun loginStartApp(){
 
-    fun tokenCorrecto(): Boolean{
-        return _token != ""
+        if (uiAppState.value.credenciales != null) {
+            fetchLogin(_uiAppState.value.credenciales!!.nombreUsuario,
+                _uiAppState.value.credenciales!!.password)
+        }
+
+        _uiAppState.value = uiAppState.value.copy(
+            appState = AppState.Success(true)
+        )
+
     }
 
     fun fetchLogin(email: String, password: String) {
+
+        _uiLoginViewState.value = _uiLoginViewState.value.copy(
+            loginState = LoginState.Loading
+        )
         viewModelScope.launch(Dispatchers.IO) {
             val result = repository.login(email.trim(), password.trim())
-            _token = result?:""
+
+            if (result != null) {
+                _uiLoginViewState.value = _uiLoginViewState.value.copy(
+                    loginState = LoginState.Success(result),
+                    token = result
+                )
+            } else {
+                _uiLoginViewState.value = _uiLoginViewState.value.copy(
+                    loginState = LoginState.Error("Error")
+                )
+            }
         }
     }
 
     fun fetchUsuario() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.getUsurarioActual(_token)
+
+            val result = repository.getUsurarioActual(uiLoginViewState.value.token)
             if (result != null) {
                 _usuario = result
             } else {
-                Log.e("Error", "No se pudo obtener el usuario")
+                Log.e("Error", "No se pudo obtener el usuario ${uiLoginViewState.value.token}")
             }
         }
     }
 
     fun fetchReporte(reporteDto: ReporteDto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.postReporte(_token, reporteDto)
+            val result = repository.postReporte(uiLoginViewState.value.token, reporteDto)
             if (result != null) {
                 _reporte = result
             } else {
@@ -135,7 +171,7 @@ class ScholaGateViewModel @Inject constructor(
 
     fun fetchAdjunto(adjuntoDto: AdjuntoDto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.postAdjunto(_token, adjuntoDto)
+            val result = repository.postAdjunto(uiLoginViewState.value.token, adjuntoDto)
             if (result != null) {
                 _adjunto = result
             } else {
@@ -146,7 +182,7 @@ class ScholaGateViewModel @Inject constructor(
 
     fun fetchAlumno(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.getAlumno(_token, id)
+            val result = repository.getAlumno(uiLoginViewState.value.token, id)
             if (result != null) {
                 _alumno = result
             } else {
@@ -157,13 +193,26 @@ class ScholaGateViewModel @Inject constructor(
 
     fun fetchAlumnos() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.getAlumnos(_token)
+            val result = repository.getAlumnos(uiLoginViewState.value.token)
             if (result != null) {
                 _listaAlumnos = result
             } else {
                 Log.e("Error", "No se pudo obtener el alumno")
             }
         }
+    }
+
+    fun logout() {
+
+        _uiAppState.value = _uiAppState.value.copy(
+            appState = AppState.Loading,
+            credenciales = Credenciales()
+        )
+
+        _uiLoginViewState.value = _uiLoginViewState.value.copy(
+            loginState = LoginState.None,
+            token = ""
+        )
     }
 }
 
