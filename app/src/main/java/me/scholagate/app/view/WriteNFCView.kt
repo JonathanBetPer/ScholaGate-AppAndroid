@@ -1,6 +1,5 @@
 package me.scholagate.app.view
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -44,6 +42,7 @@ import me.scholagate.app.viewModel.ScholaGateViewModel
 fun WriteNFCView(navController: NavHostController, scholaGateViewModel: ScholaGateViewModel,) {
 
     scholaGateViewModel.fetchAlumnos()
+    scholaGateViewModel.fetchGruposInfo()
 
     Scaffold(
         topBar = {
@@ -77,7 +76,9 @@ fun ContentWriteNFC(
 ) {
 
     val listaAlumnos = scholaGateViewModel._listaAlumnos
+    val listaGrupos = scholaGateViewModel._listaGrupos
     var listaAlumnosFiltrada: List<AlumnoDto>
+
 
     val textoBuscador = remember { mutableStateOf("") }
 
@@ -92,6 +93,7 @@ fun ContentWriteNFC(
     val showDialog = remember { mutableStateOf(false) }
     val showDialigCanceler = remember { mutableStateOf(false) }
     val selectedAlumno = remember { mutableStateOf<AlumnoDto?>(null) }
+    val selectedGrupo = remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -114,9 +116,10 @@ fun ContentWriteNFC(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ){
             items(listaAlumnosFiltrada){
-                item -> MiniCardAlumno(item)
+                item -> MiniCardAlumno(item, listaGrupos[item.idGrupo]?:"Sin grupo")
                 {
                     selectedAlumno.value = item
+
                     showDialog.value = true
                 }
             }

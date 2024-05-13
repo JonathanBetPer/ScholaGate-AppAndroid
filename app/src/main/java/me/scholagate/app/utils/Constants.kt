@@ -8,6 +8,7 @@ class Constants {
         const val ENDPOINT_USUARIO = "usuario"
         const val ENDPOINT_ALUMNO = "alumno/"
         const val ENDPOINT_ALUMNOS = "alumnos"
+        const val ENDPOINT_GRUPOS = "gruposInfo"
 
         //POST
         const val ENDPOINT_LOGIN = "login"

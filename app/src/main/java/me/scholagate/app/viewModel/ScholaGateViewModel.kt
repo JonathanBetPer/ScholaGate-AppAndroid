@@ -1,7 +1,6 @@
 package me.scholagate.app.viewModel
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,10 +15,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import me.scholagate.app.StoreCredenciales
 import me.scholagate.app.dtos.AdjuntoDto
 import me.scholagate.app.dtos.AlumnoDto
-import me.scholagate.app.dtos.Credenciales
+import me.scholagate.app.dtos.CredencialesDto
 import me.scholagate.app.dtos.ReporteDto
 import me.scholagate.app.dtos.UsuarioDto
 import me.scholagate.app.repository.SGRepository
@@ -47,7 +45,7 @@ class ScholaGateViewModel @Inject constructor(
     private val _uiAppState = MutableStateFlow(
         UiAppState(
             AppState.Loading,
-            Credenciales(),
+            CredencialesDto(),
         )
     )
     val uiAppState = _uiAppState.asStateFlow()
@@ -109,6 +107,11 @@ class ScholaGateViewModel @Inject constructor(
 
     fun onValueListaAlumnos(value: List<AlumnoDto>) = run { _listaAlumnos = value }
 
+    var _listaGrupos by mutableStateOf(mapOf<Int, String>())
+        private set
+
+    fun onValueListaGrupos(value: HashMap<Int, String>) = run { _listaGrupos = value }
+
     var _alumno by mutableStateOf(AlumnoDto())
         private set
 
@@ -123,9 +126,9 @@ class ScholaGateViewModel @Inject constructor(
 
     fun loginStartApp(){
 
-        if (uiAppState.value.credenciales != null) {
-            fetchLogin(_uiAppState.value.credenciales!!.nombreUsuario,
-                _uiAppState.value.credenciales!!.password)
+        if (uiAppState.value.credencialesDto != null) {
+            fetchLogin(_uiAppState.value.credencialesDto!!.nombreUsuario,
+                _uiAppState.value.credencialesDto!!.password)
         }
 
         _uiAppState.value = uiAppState.value.copy(
@@ -211,11 +214,22 @@ class ScholaGateViewModel @Inject constructor(
         }
     }
 
+    fun fetchGruposInfo() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = repository.getGruposInfo(uiLoginViewState.value.token)
+            if (result != null) {
+                _listaGrupos = result
+            } else {
+                Log.e("Error", "No se pudo obtener el alumno")
+            }
+        }
+    }
+
     fun logout() {
 
         _uiAppState.value = _uiAppState.value.copy(
             appState = AppState.Loading,
-            credenciales = Credenciales()
+            credencialesDto = CredencialesDto()
         )
 
         _uiLoginViewState.value = _uiLoginViewState.value.copy(

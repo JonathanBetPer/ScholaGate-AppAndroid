@@ -1,18 +1,17 @@
 package me.scholagate.app.components
 
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.widget.ImageView
-import androidx.compose.foundation.Image
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,6 +34,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,25 +44,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import me.scholagate.app.R
 import me.scholagate.app.dtos.AlumnoDto
-import java.io.ByteArrayInputStream
-import java.io.InputStream
 
 @Composable
 fun SpaceV(size: Dp = 5.dp){
@@ -79,28 +71,6 @@ fun MainTitle(title: String, color : Color = Color.White) {
 }
 
 @Composable
-fun FloatButton(imageVector: Int, contentDescription: String, color: Color = Color.White, onClick: () -> Unit) {
-    FloatingActionButton(
-        onClick = onClick,
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = color
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(id = imageVector),
-            contentDescription = contentDescription
-        )
-    }
-}
-@Composable
-fun MainIconButton(icon: ImageVector, description: String, tint: Color, onClick:() -> Unit){
-    IconButton(onClick = onClick) {
-        Icon(imageVector = icon,
-            contentDescription = description,
-            tint = tint)
-    }
-}
-
-@Composable
 fun TextFieldGenerico(value: String, onValueChange: (String) -> Unit, label: String, modifier: Modifier = Modifier) {
     OutlinedTextField(
         value = value,
@@ -111,7 +81,6 @@ fun TextFieldGenerico(value: String, onValueChange: (String) -> Unit, label: Str
         modifier = modifier
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -196,16 +165,15 @@ fun PasswordField(password: String, onValueChange: (String) -> Unit, modifier: M
 
 @Composable
 fun BotonPrincipalIcon(idIcon: Int, description: String, enabled: Boolean? = true, onClick: () -> Unit){
-
-
     OutlinedIconButton(
         onClick = onClick,
-        modifier = Modifier
-            .size(200.dp)
-            .padding(8.dp)
-            .background(MaterialTheme.colorScheme.surfaceTint),
         enabled = enabled ?: true,
         shape = RoundedCornerShape(25.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .size(200.dp)
+            .clip(RoundedCornerShape(25.dp))
+            .background(MaterialTheme.colorScheme.surfaceTint)
     ) {
 
         Icon(
@@ -216,6 +184,8 @@ fun BotonPrincipalIcon(idIcon: Int, description: String, enabled: Boolean? = tru
                 .padding(15.dp)
                 .size(1055.dp)
         )
+
+        Text(text = description, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -233,17 +203,19 @@ fun IconImagotipo(){
 }
 
 @Composable
-fun CardAlumno(alumno: AlumnoDto, onClick: () -> Unit){
+fun CardAlumno(alumno: AlumnoDto, grupo: String, onClick: () -> Unit){
 
     Column(
         modifier = Modifier
+            .padding(50.dp)
+            .fillMaxSize()
+            .clip(RoundedCornerShape(25.dp))
+            .background(Color.DarkGray)
             .clickable(
                 enabled = true,
                 onClick = onClick
-            )
-            .padding(50.dp)
-            .fillMaxSize()
-            .background(Color.DarkGray),
+            ),
+
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
@@ -268,21 +240,27 @@ fun CardAlumno(alumno: AlumnoDto, onClick: () -> Unit){
 
 
 @Composable
-fun MiniCardAlumno(alumno: AlumnoDto, onClick: () -> Unit) {
+fun MiniCardAlumno(alumno: AlumnoDto, grupo: String , onClick: () -> Unit) {
 
     Row(
         modifier = Modifier
             .clickable(
                 enabled = true,
-                onClick = onClick)
+                onClick = onClick
+            )
             .fillMaxWidth()
+            .clip(RoundedCornerShape(25.dp))
             .background(MaterialTheme.colorScheme.surfaceTint)
             .padding(8.dp),
 
     ) {
-        Text(text = alumno.nombre, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = alumno.fechaNac.toString())
+
+        Column {
+            Text(text = alumno.nombre, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = alumno.fechaNac)
+            Text(text = grupo)
+        }
     }
 }
 
@@ -299,6 +277,7 @@ fun Buscador(texto: MutableState<String>){
             .padding(8.dp)
     )
 }
+
 @Composable
 fun AlertDialogPersonalizado(
     onDismissRequest: () -> Unit,
@@ -331,4 +310,45 @@ fun AlertDialogPersonalizado(
             }
         }
     )
+}
+
+@Composable
+fun LectorNFCAnimacion(pad: PaddingValues){
+    val alpha = remember { Animatable(0f) } // Empieza completamente transparente
+
+    LaunchedEffect(key1 = true) {
+        while (true) {
+            alpha.animateTo(
+                targetValue = 0.8f,
+                animationSpec = tween(
+                    durationMillis = 2500, // Duración de la animación en milisegundos
+                    easing = LinearEasing // Tipo de interpolación
+                )
+            )
+            alpha.animateTo(
+                targetValue = 0.15f,
+                animationSpec = tween(
+                    durationMillis = 2500, // Duración de la animación en milisegundos
+                    easing = LinearEasing
+                )
+            )
+        }
+    }
+
+    Column(
+        modifier = Modifier.padding(pad).
+        padding(50.dp)
+            .fillMaxSize()
+            .background(Color.DarkGray),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    )
+    {
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.nfc_svgrepo_com),
+            contentDescription = "Validación NFC",
+            tint = Color.White.copy(alpha = alpha.value),
+            modifier = Modifier.size(200.dp)
+        )
+    }
 }

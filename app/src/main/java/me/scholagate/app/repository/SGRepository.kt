@@ -1,7 +1,7 @@
 package me.scholagate.app.repository
 
 import android.util.Log
-import me.scholagate.app.dtos.Credenciales
+import me.scholagate.app.dtos.CredencialesDto
 import me.scholagate.app.data.ScholaGateAPI
 import me.scholagate.app.dtos.AdjuntoDto
 import me.scholagate.app.dtos.AlumnoDto
@@ -14,7 +14,7 @@ class SGRepository @Inject constructor(
 )   {
     suspend fun login(email: String, password: String): String? {
         try {
-            val responseApi = api.login( Credenciales(email, password) )
+            val responseApi = api.login( CredencialesDto(email, password) )
 
             if (responseApi.isSuccessful){
                 return responseApi.body()?.token
@@ -89,32 +89,64 @@ class SGRepository @Inject constructor(
         return null
     }
 
+    suspend fun getGruposInfo(token: String): HashMap<Int, String>? {
+
+        try {
+            val responseApi =  api.getGruposInfo("Bearer $token")
+
+            if (responseApi.isSuccessful){
+                Log.d("SGRepository - getGruposInfo","Success fetching data: ${responseApi.body()}")
+                return responseApi.body()
+            }
+            else{
+                Log.e("SGRepository - getGruposInfo","Error fetching data: ${responseApi.message()}")
+            }
+
+        } catch (e: Exception) {
+            Log.e("SGRepository - getGruposInfo","Exception fetching data:")
+            e.printStackTrace()
+        }
+        return null
+    }
+
 
     suspend fun postReporte(token: String, reporteDto: ReporteDto): ReporteDto? {
 
-        val response = api.postReporte(token, reporteDto)
+        try {
+            val responseApi =  api.postReporte("Bearer $token", reporteDto)
 
-        if (response.isSuccessful) {
-            return response.body()
-        } else {
-            // Log error
-            Log.e("SGRepository", "postReporte: ${response.message()}")
+            if (responseApi.isSuccessful){
+                Log.d("SGRepository - postReporte","Success fetching data: ${responseApi.body()}")
+                return responseApi.body()
+            }
+            else{
+                Log.e("SGRepository - postReporte","Error fetching data: ${responseApi.message()}")
+            }
+
+        } catch (e: Exception) {
+            Log.e("SGRepository - postReporte","Exception fetching data:")
+            e.printStackTrace()
         }
         return null
     }
 
     suspend fun postAdjunto(token: String, adjuntoDto: AdjuntoDto): AdjuntoDto? {
 
-        val response = api.postAdjunto(token, adjuntoDto)
+        try {
+            val responseApi =  api.postAdjunto("Bearer $token", adjuntoDto)
 
-        if (response.isSuccessful) {
-            return response.body()
-        } else {
-            // Log error
-            Log.e("SGRepository", "postAdjunto: ${response.message()}")
+            if (responseApi.isSuccessful){
+                Log.d("SGRepository - postAdjunto","Success fetching data: ${responseApi.body()}")
+                return responseApi.body()
+            }
+            else{
+                Log.e("SGRepository - postAdjunto","Error fetching data: ${responseApi.message()}")
+            }
+
+        } catch (e: Exception) {
+            Log.e("SGRepository - postAdjunto","Exception fetching data:")
+            e.printStackTrace()
         }
         return null
     }
-
-
 }

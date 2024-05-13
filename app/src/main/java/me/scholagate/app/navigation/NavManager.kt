@@ -11,11 +11,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.scholagate.app.StoreCredenciales
+import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.components.LoadingApp
-import me.scholagate.app.dtos.Credenciales
+import me.scholagate.app.dtos.CredencialesDto
 import me.scholagate.app.states.AppState
 import me.scholagate.app.view.*
 import me.scholagate.app.viewModel.ScholaGateViewModel
@@ -38,7 +37,7 @@ fun NavManager(scholaGateViewModel: ScholaGateViewModel) {
 
             scholaGateViewModel.updateAppState(uiAppState.collectAsState().value.copy(
                 appState = AppState.Success(true),
-                credenciales = Credenciales(
+                credencialesDto = CredencialesDto(
                     email,
                     password
                 )

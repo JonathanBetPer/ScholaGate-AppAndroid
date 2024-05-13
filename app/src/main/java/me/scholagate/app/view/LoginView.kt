@@ -23,14 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import me.scholagate.app.StoreCredenciales
+import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.components.CheckBoxLogIn
 import me.scholagate.app.components.PasswordField
 import me.scholagate.app.components.ShowLoading
 import me.scholagate.app.components.SpaceV
 import me.scholagate.app.components.TextFieldGenerico
 import me.scholagate.app.components.TopBarLogo
-import me.scholagate.app.dtos.Credenciales
+import me.scholagate.app.dtos.CredencialesDto
 import me.scholagate.app.states.LoginState
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
@@ -93,7 +93,7 @@ fun ContentLogin(
     scope: CoroutineScope,
     guardarCredenciales: MutableState<Boolean>
 ) {
-    val credenciales = scholaGateViewModel.uiAppState.collectAsState().value.credenciales
+    val credenciales = scholaGateViewModel.uiAppState.collectAsState().value.credencialesDto
 
     val username = remember { mutableStateOf(credenciales?.nombreUsuario ?:"") }
     val password = remember { mutableStateOf(credenciales?.password?:"")  }
@@ -139,7 +139,7 @@ fun ContentLogin(
 
                 scope.launch {
                     if (guardarCredenciales.value) {
-                        storeCredenciales.guardarCredenciales(Credenciales(username.value, password.value))
+                        storeCredenciales.guardarCredenciales(CredencialesDto(username.value, password.value))
                     }
                 }
             }

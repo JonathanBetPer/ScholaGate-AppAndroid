@@ -1,7 +1,7 @@
 package me.scholagate.app.states
 
-import me.scholagate.app.dtos.Credenciales
+import me.scholagate.app.dtos.CredencialesDto
 data class UiAppState(
     var appState: AppState,
-    var credenciales: Credenciales?,
+    var credencialesDto: CredencialesDto?,
 )
