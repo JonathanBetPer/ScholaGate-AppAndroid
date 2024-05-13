@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +36,7 @@ import me.scholagate.app.components.MainTitle
 import me.scholagate.app.components.MiniCardAlumno
 import me.scholagate.app.components.SpaceV
 import me.scholagate.app.dtos.AlumnoDto
+import me.scholagate.app.states.NFCState
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,7 +100,6 @@ fun ContentWriteNFC(
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
-        val context = LocalContext.current
 
         Buscador(textoBuscador)
 
@@ -122,7 +123,13 @@ fun ContentWriteNFC(
         }
 
         if (showDialog.value) {
-              Dialog(onDismissRequest = { showDialigCanceler.value = true }) {
+
+            scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
+                NFCState = NFCState.ReadyToWrite(selectedAlumno.value!!),
+                alumno = selectedAlumno.value!!
+            )
+
+            Dialog(onDismissRequest = { showDialigCanceler.value = true }) {
                 CardAlumno(selectedAlumno.value!!) {
                     showDialigCanceler.value = true
                 }
@@ -135,9 +142,13 @@ fun ContentWriteNFC(
                         showDialigCanceler.value = false
                         showDialog.value = false
                     },
-                    dialogTitle = "¿Quieres cancelar la selección?")
+                dialogTitle = "¿Quieres cancelar la selección?")
             }
+        }else{
+            scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
+                NFCState = NFCState.None,
+                alumno = AlumnoDto()
+            )
         }
-
     }
 }

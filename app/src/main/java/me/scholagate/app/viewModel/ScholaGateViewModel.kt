@@ -25,8 +25,10 @@ import me.scholagate.app.dtos.UsuarioDto
 import me.scholagate.app.repository.SGRepository
 import me.scholagate.app.states.AppState
 import me.scholagate.app.states.LoginState
+import me.scholagate.app.states.NFCState
 import me.scholagate.app.states.UiAppState
 import me.scholagate.app.states.UiLoginViewState
+import me.scholagate.app.states.UiNFCViewState
 import me.scholagate.app.utils.NetworkStatus
 import javax.inject.Inject
 
@@ -62,6 +64,13 @@ class ScholaGateViewModel @Inject constructor(
     )
     val uiLoginViewState = _uiLoginViewState.asStateFlow()
 
+    private val _uiNfcViewState = MutableStateFlow(
+        UiNFCViewState(
+            NFCState.None,
+            AlumnoDto()
+        )
+    )
+    var uiNfcViewState = _uiNfcViewState.asStateFlow()
 
     var _usuario by mutableStateOf(UsuarioDto())
     private set
