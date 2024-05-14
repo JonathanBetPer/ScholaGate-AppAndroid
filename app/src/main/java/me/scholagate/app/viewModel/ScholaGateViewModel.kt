@@ -137,6 +137,10 @@ class ScholaGateViewModel @Inject constructor(
 
     }
 
+    fun updateUiNFCState(newNFCState: UiNFCViewState) {
+        _uiNfcViewState.value = newNFCState
+    }
+
     fun fetchLogin(email: String, password: String) {
 
         _uiLoginViewState.value = _uiLoginViewState.value.copy(

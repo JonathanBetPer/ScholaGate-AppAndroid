@@ -36,6 +36,8 @@ import me.scholagate.app.components.SpaceV
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.states.NFCState
 import me.scholagate.app.viewModel.ScholaGateViewModel
+import android.util.Log
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,7 +121,7 @@ fun ContentWriteNFC(
                 item -> MiniCardAlumno(item, listaGrupos[item.idGrupo]?:"Sin grupo")
                 {
                     selectedAlumno.value = item
-
+                    selectedGrupo.value = listaGrupos[item.idGrupo]
                     showDialog.value = true
                 }
             }
@@ -127,13 +129,18 @@ fun ContentWriteNFC(
 
         if (showDialog.value) {
 
-            scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
-                NFCState = NFCState.ReadyToWrite(selectedAlumno.value!!),
-                alumno = selectedAlumno.value!!
+            Log.d("selectedAlumno nfc", selectedAlumno.value.toString())
+
+            scholaGateViewModel.updateUiNFCState(
+                scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
+                    NFCState = NFCState.ReadyToWrite(selectedAlumno.value!!),
+                    alumno = selectedAlumno.value!!
+                )
             )
 
+
             Dialog(onDismissRequest = { showDialigCanceler.value = true }) {
-                CardAlumno(selectedAlumno.value!!) {
+                CardAlumno(selectedAlumno.value!!, selectedGrupo.value!!) {
                     showDialigCanceler.value = true
                 }
             }

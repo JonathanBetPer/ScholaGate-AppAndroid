@@ -6,7 +6,10 @@ import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.Ndef
+import android.nfc.tech.NdefFormatable
+import android.util.Log
 import me.scholagate.app.dtos.AlumnoDto
+import java.io.IOException
 
 class NfcHelper {
 
@@ -22,16 +25,37 @@ class NfcHelper {
         return null
     }
 
-    fun writeTag(tag: Tag?, alumno: AlumnoDto) {
-        val data = alumno.toBytes()
-        val ndef = Ndef.get(tag)
-        val ndefRecord = NdefRecord.createMime("application/vnd.me.scholagate.app", data)
-        val ndefMessage = NdefMessage(arrayOf(ndefRecord))
+    fun writeTag(tag: Tag?, alumno: AlumnoDto): Boolean {
 
-        ndef?.let {
-            it.connect()
-            it.writeNdefMessage(ndefMessage)
-            it.close()
+        val record = NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, ByteArray(0), alumno.toBytes())
+        val message = NdefMessage(arrayOf(record))
+
+        return try {
+            val ndef = Ndef.get(tag)
+            ndef?.connect()
+
+            ndef?.writeNdefMessage(message)
+            ndef?.close()
+            true
+        } catch (e: IOException) {
+            Log.e("NFC", "Error writing tag", e)
+            false
+        }
+    }
+
+    fun formatTag(tag: Tag?, message: NdefMessage) {
+        val ndefFormatable = NdefFormatable.get(tag)
+
+        if (ndefFormatable != null) {
+            try {
+                ndefFormatable.connect()
+                ndefFormatable.format(message)
+                ndefFormatable.close()
+            } catch (e: Exception) {
+                Log.e("NFC", "Error writing tag", e)
+            }
+        } else {
+            Log.e("NFC", "Tag is not formatable")
         }
     }
 }
