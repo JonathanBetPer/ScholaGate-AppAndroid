@@ -241,6 +241,11 @@ class ScholaGateViewModel @Inject constructor(
             token = ""
         )
     }
+
+    fun getAlumno(idAlumno: Int): AlumnoDto {
+        fetchAlumno(idAlumno)
+        return _alumno
+    }
 }
 
 

@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.navigation.NavManager
-import me.scholagate.app.nfc.NfcHelper
+import me.scholagate.app.nfc.NfcManager
 import me.scholagate.app.states.NFCState
 import me.scholagate.app.ui.theme.ScholaGateTheme
 import me.scholagate.app.viewModel.ScholaGateViewModel
@@ -28,7 +28,7 @@ import me.scholagate.app.viewModel.ScholaGateViewModel
 class MainActivity : ComponentActivity() {
 
     private lateinit var nfcAdapter: NfcAdapter
-    private val nfcHelper = NfcHelper()
+    private val nfcManager = NfcManager()
     private val scholaGateViewModel: ScholaGateViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,19 +50,15 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        Log.e("NFC", "onNewIntent")
-
         when (scholaGateViewModel.uiNfcViewState.value.NFCState) {
             NFCState.None -> {
-                Log.e("NFC", "None")
-                Toast.makeText(this, "No hay nada que leer ni escribir", Toast.LENGTH_SHORT).show()
+                nfcAdapter.disableForegroundDispatch(this)
             }
 
 
             NFCState.Loading -> {
                 Log.e("NFC", "Loading")
-                Toast.makeText(this, "Espere un momento, por favor", Toast.LENGTH_SHORT).show()
-
+                Toast.makeText(this, "No hay nada que leer ni escribir", Toast.LENGTH_SHORT).show()
             }
 
 
@@ -75,12 +71,12 @@ class MainActivity : ComponentActivity() {
             is NFCState.ReadyToRead -> {
                 Log.e("NFC", "Ready to read")
 
-                val alumno = nfcHelper.readTag(intent)
+                val idAlumno = nfcManager.readTag(intent)
 
-                if (alumno != null) {
+                if (idAlumno != null) {
                     scholaGateViewModel.uiNfcViewState.value.copy(
-                        NFCState = NFCState.Success(alumno),
-                        alumno = alumno
+                        NFCState = NFCState.SuccessRead(idAlumno),
+                        alumno = scholaGateViewModel.getAlumno(idAlumno)
                     )
                 } else {
                     scholaGateViewModel.uiNfcViewState.value.copy(
@@ -106,18 +102,19 @@ class MainActivity : ComponentActivity() {
 
                     val alumno = (scholaGateViewModel.uiNfcViewState.value.NFCState as NFCState.ReadyToWrite).alumno
 
-                    if (nfcHelper.writeTag(tag, alumno))  Log.e("NFC TECH_DISCOVERED", "Tag written")
+                    if (nfcManager.writeTag(tag, alumno))  Log.e("NFC TECH_DISCOVERED", "Tag written")
                 }
 
             }
 
-            is NFCState.Success -> {
-                Log.e("NFC", "Success")
+            is NFCState.SuccessWrite -> {
+                Log.e("NFC", "SuccessWrite")
 
-                scholaGateViewModel.uiNfcViewState.value.copy(
-                    NFCState = NFCState.None,
-                    alumno = AlumnoDto()
-                )
+                Toast.makeText(this, "Tag Escrita", Toast.LENGTH_SHORT).show()
+            }
+
+            is NFCState.SuccessRead -> {
+                Log.e("NFC", "SuccessRead")
             }
 
         }

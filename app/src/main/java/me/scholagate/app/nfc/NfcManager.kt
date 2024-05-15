@@ -10,24 +10,34 @@ import android.nfc.tech.NdefFormatable
 import android.util.Log
 import me.scholagate.app.dtos.AlumnoDto
 import java.io.IOException
+import javax.crypto.Cipher
+import javax.crypto.SecretKey
+import javax.crypto.spec.IvParameterSpec
 
-class NfcHelper {
+class NfcManager {
 
-    fun readTag(intent: Intent): AlumnoDto? {
+    fun readTag(intent: Intent): Int? {
         val rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
         if (rawMessages != null) {
             val messages: List<NdefMessage> = rawMessages.map { it as NdefMessage }
             val record = messages[0].records[0]
             val payload = record.payload
 
-            return AlumnoDto(payload)
+            return payload[0].toInt()
         }
         return null
     }
 
     fun writeTag(tag: Tag?, alumno: AlumnoDto): Boolean {
 
-        val record = NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, ByteArray(0), alumno.toBytes())
+        val alumnoBytes = alumno.id.toString().toByteArray()
+
+        val payload = ByteArray(1 + alumnoBytes.size)
+
+        payload[0] = alumnoBytes.size.toByte()
+        System.arraycopy(alumnoBytes, 0, payload, 1, alumnoBytes.size)
+
+        val record = NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, ByteArray(0), payload)
         val message = NdefMessage(arrayOf(record))
 
         return try {
@@ -58,4 +68,6 @@ class NfcHelper {
             Log.e("NFC", "Tag is not formatable")
         }
     }
+
+
 }

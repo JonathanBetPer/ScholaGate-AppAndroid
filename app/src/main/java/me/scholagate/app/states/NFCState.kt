@@ -7,6 +7,7 @@ sealed class NFCState {
     data object Loading : NFCState()
     data object ReadyToRead : NFCState()
     data class ReadyToWrite(val alumno: AlumnoDto) : NFCState()
-    data class Success(val alumno: AlumnoDto) : NFCState()
+    data class SuccessRead(val idAlumno: Int) : NFCState()
+    data class SuccessWrite(val alumno: AlumnoDto) : NFCState()
     data class Error(val message: String) : NFCState()
 }
