@@ -22,6 +22,7 @@ class NfcManager {
             val messages: List<NdefMessage> = rawMessages.map { it as NdefMessage }
             val record = messages[0].records[0]
             val payload = record.payload
+            Log.e("NFC Read", "Payload id: " + payload[0].toInt())
 
             return payload[0].toInt()
         }

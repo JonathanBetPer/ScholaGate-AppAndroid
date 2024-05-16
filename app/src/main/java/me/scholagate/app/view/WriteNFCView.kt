@@ -38,14 +38,9 @@ import me.scholagate.app.states.NFCState
 import me.scholagate.app.viewModel.ScholaGateViewModel
 import android.util.Log
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WriteNFCView(navController: NavHostController, scholaGateViewModel: ScholaGateViewModel,) {
-
-    scholaGateViewModel.fetchAlumnos()
-    scholaGateViewModel.fetchGruposInfo()
-
     Scaffold(
         topBar = {
             TopAppBar(title = { MainTitle(title = "NFC Writer",
@@ -80,7 +75,6 @@ fun ContentWriteNFC(
     val listaAlumnos = scholaGateViewModel._listaAlumnos
     val listaGrupos = scholaGateViewModel._listaGrupos
     var listaAlumnosFiltrada: List<AlumnoDto>
-
 
     val textoBuscador = remember { mutableStateOf("") }
 
@@ -123,21 +117,18 @@ fun ContentWriteNFC(
                     selectedAlumno.value = item
                     selectedGrupo.value = listaGrupos[item.idGrupo]
                     showDialog.value = true
+
+                    scholaGateViewModel.updateNFCState(
+                        scholaGateViewModel.uiNfcViewState.value.copy(
+                            NFCState = NFCState.ReadyToWrite(selectedAlumno.value!!),
+                            alumno = selectedAlumno.value!!
+                        )
+                    )
                 }
             }
         }
 
         if (showDialog.value) {
-
-            Log.d("selectedAlumno nfc", selectedAlumno.value.toString())
-
-            scholaGateViewModel.updateUiNFCState(
-                scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
-                    NFCState = NFCState.ReadyToWrite(selectedAlumno.value!!),
-                    alumno = selectedAlumno.value!!
-                )
-            )
-
 
             Dialog(onDismissRequest = { showDialigCanceler.value = true }) {
                 CardAlumno(selectedAlumno.value!!, selectedGrupo.value!!) {
@@ -154,6 +145,7 @@ fun ContentWriteNFC(
                     },
                 dialogTitle = "¿Quieres cancelar la selección?")
             }
+
         }else{
             scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
                 NFCState = NFCState.None,

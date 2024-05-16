@@ -1,8 +1,10 @@
 package me.scholagate.app.datastore
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
@@ -18,12 +20,8 @@ class StoreCredenciales (private val context: Context){
         val PASSWORD = stringPreferencesKey("password")
     }
 
-    val getEmail: Flow<String> = context.dataStore.data.map { preferences->
-                preferences[EMAIL]?:""
-            }
-
-    val getPassword: Flow<String> = context.dataStore.data.map { preferences->
-                preferences[PASSWORD]?:""
+    val getCredenciales: Flow<CredencialesDto> = context.dataStore.data.map { preferences->
+                CredencialesDto(preferences[EMAIL]?:"",preferences[PASSWORD]?:"")
             }
 
     private suspend fun saveEmail(email:String){

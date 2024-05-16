@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.dtos.AdjuntoDto
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.dtos.CredencialesDto
@@ -34,7 +35,19 @@ import javax.inject.Inject
 class ScholaGateViewModel @Inject constructor(
     private val repository: SGRepository,
     networkConnectivityService: NetworkConnectivityService,
+    storeCredenciales: StoreCredenciales
     ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            storeCredenciales.getCredenciales.collect { credenciales ->
+                _uiAppState.value = UiAppState(
+                    AppState.Success(true),
+                    credenciales
+                )
+            }
+        }
+    }
 
     val networkStatus: StateFlow<NetworkStatus> = networkConnectivityService.networkStatus.stateIn(
         initialValue = NetworkStatus.Unknown,
@@ -69,6 +82,10 @@ class ScholaGateViewModel @Inject constructor(
         )
     )
     var uiNfcViewState = _uiNfcViewState.asStateFlow()
+
+    fun updateNFCState(newNFCState: UiNFCViewState) {
+        _uiNfcViewState.value = newNFCState
+    }
 
     var _usuario by mutableStateOf(UsuarioDto())
     private set
@@ -137,9 +154,6 @@ class ScholaGateViewModel @Inject constructor(
 
     }
 
-    fun updateUiNFCState(newNFCState: UiNFCViewState) {
-        _uiNfcViewState.value = newNFCState
-    }
 
     fun fetchLogin(email: String, password: String) {
 

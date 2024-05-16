@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -175,17 +176,21 @@ fun BotonPrincipalIcon(idIcon: Int, description: String, enabled: Boolean? = tru
             .clip(RoundedCornerShape(25.dp))
             .background(MaterialTheme.colorScheme.surfaceTint)
     ) {
-
-        Icon(
-            painter = painterResource(id = idIcon),
-            contentDescription = description,
-            tint = Color.Unspecified,
-            modifier = Modifier
-                .padding(15.dp)
-                .size(1055.dp)
-        )
-
-        Text(text = description, fontWeight = FontWeight.Bold)
+        Column (
+            modifier = Modifier.padding(8.dp).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = idIcon),
+                contentDescription = description,
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .padding(15.dp)
+                    .size(1055.dp)
+            )
+            Text(text = description, fontWeight = FontWeight.Bold)
+        }
     }
 }
 
@@ -336,8 +341,9 @@ fun LectorNFCAnimacion(pad: PaddingValues){
     }
 
     Column(
-        modifier = Modifier.padding(pad).
-        padding(50.dp)
+        modifier = Modifier
+            .padding(pad)
+            .padding(50.dp)
             .fillMaxSize()
             .background(Color.DarkGray),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -350,5 +356,19 @@ fun LectorNFCAnimacion(pad: PaddingValues){
             tint = Color.White.copy(alpha = alpha.value),
             modifier = Modifier.size(200.dp)
         )
+    }
+}
+
+@Composable
+fun BotonCambioSeleccion(texto: String, enabled: Boolean, color: Color, onClick: () -> Unit){
+    Button(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .background(color)
+            .clip(RoundedCornerShape(15.dp)),
+        enabled = enabled,
+        onClick = onClick) {
+        Text(text = texto)
     }
 }

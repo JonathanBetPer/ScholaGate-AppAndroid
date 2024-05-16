@@ -20,9 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -31,7 +29,6 @@ import me.scholagate.app.R
 import me.scholagate.app.components.AlertDialogPersonalizado
 import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.components.BotonPrincipalIcon
-import me.scholagate.app.components.CardAlumno
 import me.scholagate.app.components.MainTitle
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
@@ -63,7 +60,7 @@ fun HomeView(
             )
         }
     ) {
-        CerrarSesion(showDialog, scholaGateViewModel, storeCredenciales, scope, navController)
+        CerrarSesion(showDialog, scholaGateViewModel,storeCredenciales, scope, navController)
         ContentHome(pad = it, scholaGateViewModel = scholaGateViewModel, navController = navController)
     }
 }
