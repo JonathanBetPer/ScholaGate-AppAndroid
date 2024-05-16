@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.components.CheckBoxLogIn
 import me.scholagate.app.components.PasswordField
 import me.scholagate.app.components.ShowLoading
@@ -39,7 +37,6 @@ import me.scholagate.app.viewModel.ScholaGateViewModel
 fun LoginView(
     navController: NavHostController,
     scholaGateViewModel: ScholaGateViewModel,
-    storeCredenciales: StoreCredenciales,
     ){
 
     val context = LocalContext.current
@@ -58,7 +55,6 @@ fun LoginView(
             LoginState.None ->  ContentLogin(
                 pad = it,
                 scholaGateViewModel,
-                storeCredenciales,
                 scope,
                 guardarCredenciales
             )
@@ -69,7 +65,6 @@ fun LoginView(
                 ContentLogin(
                     pad = it,
                     scholaGateViewModel,
-                    storeCredenciales,
                     scope,
                     guardarCredenciales
                 )
@@ -82,7 +77,6 @@ fun LoginView(
                 }
             }
         }
-
     }
 }
 
@@ -90,7 +84,6 @@ fun LoginView(
 fun ContentLogin(
     pad: PaddingValues,
     scholaGateViewModel: ScholaGateViewModel,
-    storeCredenciales: StoreCredenciales,
     scope: CoroutineScope,
     guardarCredenciales: MutableState<Boolean>
 ) {
@@ -140,7 +133,7 @@ fun ContentLogin(
 
                 scope.launch {
                     if (guardarCredenciales.value) {
-                        storeCredenciales.guardarCredenciales(CredencialesDto(username.value, password.value))
+                        scholaGateViewModel.storeCredenciales.guardarCredenciales(CredencialesDto(username.value, password.value))
                     }
                 }
             }

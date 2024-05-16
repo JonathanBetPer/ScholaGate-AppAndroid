@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-        val storeCredenciales = StoreCredenciales(this)
 
         setContent {
 
@@ -48,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    NavManager( scholaGateViewModel, storeCredenciales)
+                    NavManager(scholaGateViewModel)
                 }
             }
         }
@@ -127,10 +126,6 @@ class MainActivity : ComponentActivity() {
                 Log.e("NFC", "Error")
                 val mensaje = (scholaGateViewModel.uiNfcViewState.value.NFCState as NFCState.Error).message
                 Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
-            }
-
-            else -> {
-                Log.e("NFC", "Else")
             }
         }
     }

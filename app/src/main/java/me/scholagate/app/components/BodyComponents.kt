@@ -66,6 +66,7 @@ fun SpaceV(size: Dp = 5.dp){
 fun SpaceH(size: Dp = 5.dp){
     Spacer(modifier = Modifier.width(size))
 }
+
 @Composable
 fun MainTitle(title: String, color : Color = Color.White) {
     Text(text = title, color = color, fontWeight = FontWeight.Bold)
@@ -177,18 +178,21 @@ fun BotonPrincipalIcon(idIcon: Int, description: String, enabled: Boolean? = tru
             .background(MaterialTheme.colorScheme.surfaceTint)
     ) {
         Column (
-            modifier = Modifier.padding(8.dp).fillMaxSize(),
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
+
             Icon(
                 painter = painterResource(id = idIcon),
                 contentDescription = description,
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .padding(15.dp)
-                    .size(1055.dp)
+                    .size(100.dp)
             )
+
             Text(text = description, fontWeight = FontWeight.Bold)
         }
     }
@@ -212,8 +216,8 @@ fun CardAlumno(alumno: AlumnoDto, grupo: String, onClick: () -> Unit){
 
     Column(
         modifier = Modifier
-            .padding(50.dp)
-            .fillMaxSize()
+            .padding(25.dp)
+            .fillMaxWidth()
             .clip(RoundedCornerShape(25.dp))
             .background(Color.DarkGray)
             .clickable(
@@ -224,20 +228,12 @@ fun CardAlumno(alumno: AlumnoDto, grupo: String, onClick: () -> Unit){
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
-        /*
-        val inputStream: InputStream = ByteArrayInputStream(alumno.foto.toByteArray())
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        val imageBitmap = bitmap.asImageBitmap()
+        IconoAlumno(size = 100.dp, nombreAlumno = alumno.nombre)
 
-        Image(
-            bitmap = imageBitmap,
-            contentDescription = "Foto del alumno",
-            modifier = Modifier.fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
-*/
         Text(text = alumno.nombre, fontWeight = FontWeight.Bold)
+        Text(text =grupo)
         Text(text = alumno.fechaNac)
+        SpaceV(15.dp)
 
     }
 }
@@ -260,6 +256,8 @@ fun MiniCardAlumno(alumno: AlumnoDto, grupo: String , onClick: () -> Unit) {
 
     ) {
 
+        IconoAlumno(size = 50.dp, nombreAlumno = alumno.nombre)
+
         Column {
             Text(text = alumno.nombre, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.width(8.dp))
@@ -267,6 +265,18 @@ fun MiniCardAlumno(alumno: AlumnoDto, grupo: String , onClick: () -> Unit) {
             Text(text = grupo)
         }
     }
+}
+
+@Composable
+fun IconoAlumno(size: Dp, nombreAlumno: String){
+    Icon(
+        painter = painterResource(id = R.drawable.baseline_account_circle_24),
+        contentDescription = nombreAlumno,
+        tint = Color.Unspecified,
+        modifier = Modifier
+            .padding(15.dp)
+            .size(size)
+    )
 }
 
 @Composable

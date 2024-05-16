@@ -14,57 +14,77 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import me.scholagate.app.R
 import me.scholagate.app.components.AlertDialogPersonalizado
-import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.components.BotonPrincipalIcon
+import me.scholagate.app.components.LoadingApp
 import me.scholagate.app.components.MainTitle
+import me.scholagate.app.components.ShowLoading
+import me.scholagate.app.states.HomeState
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView(
     navController: NavHostController,
-    scholaGateViewModel: ScholaGateViewModel,
-    storeCredenciales: StoreCredenciales,
+    scholaGateViewModel: ScholaGateViewModel
     ){
-    val scope = rememberCoroutineScope()
     val showDialog = remember { mutableStateOf(false) }
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { MainTitle(title = "Bienvenido ${scholaGateViewModel._usuario.nombre}",
-                color = MaterialTheme.colorScheme.onPrimary ) },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceTint
-                ),
-                actions = {
-                    Button(
-                        onClick = { showDialog.value = true }
-                    ){
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.baseline_logout_24),
-                            contentDescription = "Cerrar Sesión")
-                    }
-                }
-            )
+    val uiHomeViewState by scholaGateViewModel.uiHomeState.collectAsState()
+
+    when (uiHomeViewState.homeState) {
+
+        is HomeState.Error -> {
+            scholaGateViewModel.logout()
+            navController.navigate("Login")
         }
-    ) {
-        CerrarSesion(showDialog, scholaGateViewModel,storeCredenciales, scope, navController)
-        ContentHome(pad = it, scholaGateViewModel = scholaGateViewModel, navController = navController)
+
+        HomeState.Loading -> {
+            LoadingApp()
+            ShowLoading()
+        }
+
+        HomeState.None -> {
+            //Nada de nada
+        }
+
+        is HomeState.Success -> {
+
+            Scaffold(
+                topBar = {
+                    TopAppBar(title = { MainTitle(title = "Bienvenido ${scholaGateViewModel._usuario.nombre}",
+                        color = MaterialTheme.colorScheme.onPrimary ) },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceTint
+                        ),
+                        actions = {
+                            Button(
+                                onClick = { showDialog.value = true }
+                            ){
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_logout_24),
+                                    contentDescription = "Cerrar Sesión")
+                            }
+                        }
+                    )
+                }
+            ) {
+
+                CerrarSesion(showDialog, scholaGateViewModel, navController)
+                ContentHome(pad = it, scholaGateViewModel = scholaGateViewModel, navController = navController)
+            }
+        }
     }
 }
-
 
 @Composable
 fun ContentHome(
@@ -90,14 +110,14 @@ fun ContentHome(
 
         BotonPrincipalIcon(
             idIcon = R.drawable.baseline_verified_24,
-            description = "Verificar Información NFC"
+            description = "Verificar NFC"
         ) {
             navController.navigate("Validacion")
         }
 
         BotonPrincipalIcon(
             idIcon = R.drawable.nfc_svgrepo_com,
-            description = "Escribir Información NFC",
+            description = "Escribir NFC",
             scholaGateViewModel._usuario.rol == "Admin"
         ) {
             navController.navigate("WriteNFC")
@@ -110,8 +130,6 @@ fun ContentHome(
 fun CerrarSesion(
     showDialog: MutableState<Boolean>,
     scholaGateViewModel: ScholaGateViewModel,
-    storeCredenciales: StoreCredenciales,
-    scope: CoroutineScope,
     navController: NavHostController
 ) {
 
@@ -120,11 +138,7 @@ fun CerrarSesion(
             onDismissRequest = { showDialog.value = false },
             onConfirmation = {
                 scholaGateViewModel.logout()
-                scope.launch {
-                    storeCredenciales.borrarCredenciales()
-                    delay(5000L)
-                    navController.navigate("Login")
-                }
+                navController.navigate("Login")
             },
             dialogTitle = "¿Quieres cerrar sesión?"
         )

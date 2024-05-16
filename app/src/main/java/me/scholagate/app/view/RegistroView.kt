@@ -2,7 +2,6 @@ package me.scholagate.app.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScopeInstance.align
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -117,14 +116,15 @@ fun ContentRegistro(pad: PaddingValues, scholaGateViewModel: ScholaGateViewModel
             label = "Motivo",
         )
 
-    }
-    Button(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .padding(top = 10.dp),
-        onClick = { /*TODO*/ },
-        enabled = true,
-    ) {
-        Text(text = "Guardar")
+        Button(
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(top = 10.dp),
+            onClick = { /*TODO*/ },
+            enabled = true,
+        ) {
+            Text(text = "Guardar")
+        }
+
     }
 }

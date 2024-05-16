@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import me.scholagate.app.components.LoadingApp
@@ -16,16 +17,15 @@ import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.dtos.CredencialesDto
 import me.scholagate.app.states.AppState
+import me.scholagate.app.states.HomeState
 import me.scholagate.app.states.NFCState
 import me.scholagate.app.view.*
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun NavManager(
-    scholaGateViewModel: ScholaGateViewModel,
-    storeCredenciales: StoreCredenciales,
+    scholaGateViewModel: ScholaGateViewModel
 ) {
     val navController = rememberNavController()
     val uiAppState = scholaGateViewModel.uiAppState
@@ -34,7 +34,6 @@ fun NavManager(
         AppState.Loading -> {
             LoadingApp()
         }
-
 
         is AppState.Success -> {
             val credencielesExito = (uiAppState.collectAsState().value.appState as AppState.Success).credencielesExito
@@ -47,10 +46,9 @@ fun NavManager(
 
             NavHost(navController = navController, startDestination = startDestination){
                 composable("Login"){
-                    LoginView(navController, scholaGateViewModel, storeCredenciales)
+                    LoginView(navController, scholaGateViewModel)
                 }
                 composable("Home"){
-                    scholaGateViewModel.fetchUsuario()
 
                     scholaGateViewModel.updateNFCState(
                         scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
@@ -59,11 +57,21 @@ fun NavManager(
                         )
                     )
 
-                    HomeView(navController, scholaGateViewModel, storeCredenciales)
+                    scholaGateViewModel.updateHomeState(
+                        scholaGateViewModel.uiHomeState.collectAsState().value.copy(
+                            homeState = HomeState.Loading
+                        )
+                    )
+
+                    scholaGateViewModel.fetchUsuario()
+
+                    HomeView(navController, scholaGateViewModel)
                 }
+
                 composable("Registro"){
                     RegistroView(navController, scholaGateViewModel)
                 }
+
                 composable("Validacion"){
                     scholaGateViewModel.fetchGruposInfo()
 

@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.scholagate.app.data.ScholaGateAPI
+import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.network.NetworkConnectivityService
 import me.scholagate.app.network.NetworkConnectivityServiceImpl
 import retrofit2.Retrofit
@@ -69,5 +70,11 @@ object AppModule {
     @Provides
     fun provideNetworkConnectivityService(@ApplicationContext context: Context): NetworkConnectivityService {
         return NetworkConnectivityServiceImpl(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideStoreCredenciales(@ApplicationContext context: Context): StoreCredenciales {
+        return  StoreCredenciales(context);
     }
 }
