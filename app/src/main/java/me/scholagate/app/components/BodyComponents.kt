@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -370,15 +371,24 @@ fun LectorNFCAnimacion(pad: PaddingValues){
 }
 
 @Composable
-fun BotonCambioSeleccion(texto: String, enabled: Boolean, color: Color, onClick: () -> Unit){
+fun BotonCambioSeleccion(texto: String, enabled: Boolean, color1: Color, color2: Color, onClick: () -> Unit){
     Button(
         modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .background(color)
             .clip(RoundedCornerShape(15.dp)),
         enabled = enabled,
-        onClick = onClick) {
-        Text(text = texto)
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (enabled) color1 else color2,
+            contentColor = Color.White,
+            disabledContainerColor = if (enabled) color1 else color2,
+            disabledContentColor = Color.Black
+        )
+    ) {
+        Text(
+            modifier = Modifier.padding(10.dp),
+            text = texto,
+            fontWeight = FontWeight.W900,
+            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+        )
     }
 }

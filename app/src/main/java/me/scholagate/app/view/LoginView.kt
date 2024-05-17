@@ -89,8 +89,8 @@ fun ContentLogin(
 ) {
     val credenciales = scholaGateViewModel.uiAppState.collectAsState().value.credencialesDto
 
-    val username = remember { mutableStateOf(credenciales?.nombreUsuario ?:"") }
-    val password = remember { mutableStateOf(credenciales?.password?:"")  }
+    val username = remember { mutableStateOf(credenciales.nombreUsuario) }
+    val password = remember { mutableStateOf(credenciales.password)  }
 
     Column(
         Modifier

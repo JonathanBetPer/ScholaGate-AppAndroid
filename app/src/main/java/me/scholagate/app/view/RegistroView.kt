@@ -1,7 +1,6 @@
 package me.scholagate.app.view
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,29 +20,32 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import me.scholagate.app.R
 import me.scholagate.app.components.BotonCambioSeleccion
-import me.scholagate.app.components.LectorNFCAnimacion
 import me.scholagate.app.components.MainTitle
 import me.scholagate.app.components.TextFieldGenerico
+import me.scholagate.app.ui.theme.SgAzul
+import me.scholagate.app.ui.theme.SgNaranja
 import me.scholagate.app.viewModel.ScholaGateViewModel
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistroView(navController: NavHostController, scholaGateViewModel: ScholaGateViewModel,){
     Scaffold(
         topBar = {
-            TopAppBar(title = { MainTitle(title = "Registro",
-                color = MaterialTheme.colorScheme.onPrimary ) },
+            TopAppBar(
+                title = {
+                    MainTitle(
+                        title = "Registro",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    ) 
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceTint
                 ),
@@ -76,55 +78,57 @@ fun ContentRegistro(pad: PaddingValues, scholaGateViewModel: ScholaGateViewModel
     Column(
         modifier = Modifier
             .padding(pad)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween
     ) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(CenterHorizontally)
-        ) {
+                .padding(top = 20.dp, bottom = 20.dp)
+                .align(CenterHorizontally),
+            horizontalArrangement = Arrangement.SpaceEvenly
 
+        ) {
             BotonCambioSeleccion(
                 "Entrada",
                 !tipoRegistro.value,
-                Color.White
+                SgNaranja,
+                SgAzul
             ) {
                 tipoRegistro.value = true
             }
-
-            BotonCambioSeleccion("Salida",
+            BotonCambioSeleccion(
+                "Salida",
                 tipoRegistro.value,
-                Color.White
+                SgNaranja,
+                SgAzul
             ){
                 tipoRegistro.value = false
             }
         }
 
-        Box(modifier = Modifier
-            .padding(35.dp)
-            .fillMaxSize()
-            .align(CenterHorizontally)) {
-            LectorNFCAnimacion(pad)
-        }
-
-        TextFieldGenerico(
-            value = motivoValue.value,
-            onValueChange = {motivoValue.value = it},
-            label = "Motivo",
-        )
-
-        Button(
+        Column(
             modifier = Modifier
-                .align(Alignment.End)
-                .padding(top = 10.dp),
-            onClick = { /*TODO*/ },
-            enabled = true,
+                .padding(40.dp)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = CenterHorizontally
         ) {
-            Text(text = "Guardar")
-        }
+            TextFieldGenerico(
+                value = motivoValue.value,
+                onValueChange = {motivoValue.value = it},
+                label = "Motivo",
+            )
 
+            Button(
+                modifier = Modifier
+                    .align(CenterHorizontally)
+                    .padding(top = 10.dp),
+                onClick = { /*TODO*/ },
+                enabled = true,
+            ) {
+                Text(text = "Guardar")
+            }
+        }
     }
 }

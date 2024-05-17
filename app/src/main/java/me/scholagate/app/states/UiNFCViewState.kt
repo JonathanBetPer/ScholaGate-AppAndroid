@@ -5,4 +5,5 @@ import me.scholagate.app.dtos.AlumnoDto
 data class UiNFCViewState(
     var NFCState: NFCState,
     var alumno: AlumnoDto,
+    var idAlumno: Int
 )

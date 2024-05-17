@@ -20,7 +20,7 @@ class SGRepository @Inject constructor(
                 return responseApi.body()?.token
             }
             else{
-                Log.e("SGRepository - Login","Error fetching data: ${responseApi.message()}")
+                Log.e("SGRepository - Login","Error fetching data: ${responseApi.errorBody()}")
             }
 
         } catch (e: Exception) {
@@ -39,7 +39,7 @@ class SGRepository @Inject constructor(
                 return responseApi.body()
             }
             else{
-                Log.e("SGRepository - getUser","Error fetching data: ${responseApi.message()}")
+                Log.e("SGRepository - getUser","Error fetching data: ${responseApi.errorBody()}")
             }
 
         } catch (e: Exception) {
@@ -59,7 +59,7 @@ class SGRepository @Inject constructor(
                 return responseApi.body()
             }
             else{
-                Log.e("SGRepository - getAlumno","Error fetching data: ${responseApi.message()}")
+                Log.e("SGRepository - getAlumno","Error fetching data: ${responseApi.errorBody()}")
             }
 
         } catch (e: Exception) {
@@ -70,7 +70,6 @@ class SGRepository @Inject constructor(
     }
 
     suspend fun getAlumnos(token: String): List<AlumnoDto>? {
-
         try {
             val responseApi =  api.getAlumnos("Bearer $token")
 
@@ -79,7 +78,7 @@ class SGRepository @Inject constructor(
                 return responseApi.body()
             }
             else{
-                Log.e("SGRepository - getAlumnos","Error fetching data: ${responseApi.message()}")
+                Log.e("SGRepository - getAlumnos","Error fetching data: ${responseApi.errorBody()}")
             }
 
         } catch (e: Exception) {
@@ -99,7 +98,7 @@ class SGRepository @Inject constructor(
                 return responseApi.body()
             }
             else{
-                Log.e("SGRepository - getGruposInfo","Error fetching data: ${responseApi.message()}")
+                Log.e("SGRepository - getGruposInfo","Error fetching data: ${responseApi.errorBody()}")
             }
 
         } catch (e: Exception) {
@@ -120,7 +119,7 @@ class SGRepository @Inject constructor(
                 return responseApi.body()
             }
             else{
-                Log.e("SGRepository - postReporte","Error fetching data: ${responseApi.message()}")
+                Log.e("SGRepository - postReporte","Error fetching data: ${responseApi.errorBody()}")
             }
 
         } catch (e: Exception) {
@@ -140,7 +139,7 @@ class SGRepository @Inject constructor(
                 return responseApi.body()
             }
             else{
-                Log.e("SGRepository - postAdjunto","Error fetching data: ${responseApi.message()}")
+                Log.e("SGRepository - postAdjunto","Error fetching data: ${responseApi.errorBody()}")
             }
 
         } catch (e: Exception) {

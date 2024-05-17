@@ -16,6 +16,7 @@ import me.scholagate.app.components.LoadingApp
 import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.dtos.CredencialesDto
+import me.scholagate.app.dtos.UsuarioDto
 import me.scholagate.app.states.AppState
 import me.scholagate.app.states.HomeState
 import me.scholagate.app.states.NFCState
@@ -48,22 +49,29 @@ fun NavManager(
                 composable("Login"){
                     LoginView(navController, scholaGateViewModel)
                 }
+
                 composable("Home"){
+
+                    if  (scholaGateViewModel._usuario == UsuarioDto()){
+                        scholaGateViewModel.updateHomeState(
+                            scholaGateViewModel.uiHomeState.collectAsState().value.copy(
+                                homeState = HomeState.Loading
+                            )
+                        )
+
+                        scholaGateViewModel.fetchUsuario()
+                    }
+
+                    scholaGateViewModel.fetchAlumnos()
+                    scholaGateViewModel.fetchGruposInfo()
 
                     scholaGateViewModel.updateNFCState(
                         scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
                             NFCState = NFCState.None,
-                            alumno = AlumnoDto()
+                            alumno = AlumnoDto(),
+                            idAlumno = -1
                         )
                     )
-
-                    scholaGateViewModel.updateHomeState(
-                        scholaGateViewModel.uiHomeState.collectAsState().value.copy(
-                            homeState = HomeState.Loading
-                        )
-                    )
-
-                    scholaGateViewModel.fetchUsuario()
 
                     HomeView(navController, scholaGateViewModel)
                 }
@@ -73,21 +81,10 @@ fun NavManager(
                 }
 
                 composable("Validacion"){
-                    scholaGateViewModel.fetchGruposInfo()
-
-                    scholaGateViewModel.updateNFCState(
-                        scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
-                            NFCState = NFCState.ReadyToRead,
-                            alumno = AlumnoDto()
-                        )
-                    )
-
                     ValidacionView(navController, scholaGateViewModel)
                 }
-                composable("WriteNFC"){
-                    scholaGateViewModel.fetchAlumnos()
-                    scholaGateViewModel.fetchGruposInfo()
 
+                composable("WriteNFC"){
                     WriteNFCView(navController, scholaGateViewModel)
                 }
             }

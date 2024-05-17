@@ -37,6 +37,8 @@ import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.states.NFCState
 import me.scholagate.app.viewModel.ScholaGateViewModel
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +76,7 @@ fun ContentWriteNFC(
 
     val listaAlumnos = scholaGateViewModel._listaAlumnos
     val listaGrupos = scholaGateViewModel._listaGrupos
-    var listaAlumnosFiltrada: List<AlumnoDto>
+    val listaAlumnosFiltrada: List<AlumnoDto>
 
     val textoBuscador = remember { mutableStateOf("") }
 
@@ -90,6 +92,25 @@ fun ContentWriteNFC(
     val showDialigCanceler = remember { mutableStateOf(false) }
     val selectedAlumno = remember { mutableStateOf<AlumnoDto?>(null) }
     val selectedGrupo = remember { mutableStateOf<String?>(null) }
+
+
+    if (scholaGateViewModel.uiNfcViewState.collectAsState().value.NFCState == NFCState.SuccessWrite) {
+        showDialog.value = false
+        showDialog.value = false
+        selectedAlumno.value = null
+        selectedGrupo.value = null
+        textoBuscador.value = ""
+
+        Log.i("NFC", "SuccessWrite")
+        Toast.makeText(LocalContext.current, "NFC Tag Escrita", Toast.LENGTH_SHORT).show()
+
+        scholaGateViewModel.updateNFCState(
+            scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
+                NFCState = NFCState.None,
+                alumno = AlumnoDto()
+            )
+        )
+    }
 
     Column(
         modifier = Modifier

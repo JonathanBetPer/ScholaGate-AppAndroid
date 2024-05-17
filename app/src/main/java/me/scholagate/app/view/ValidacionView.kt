@@ -1,11 +1,13 @@
 package me.scholagate.app.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -27,6 +29,13 @@ import me.scholagate.app.viewModel.ScholaGateViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ValidacionView(navController: NavHostController, scholaGateViewModel: ScholaGateViewModel,){
+
+    scholaGateViewModel.updateNFCState(
+        scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
+            NFCState = NFCState.ReadyToRead,
+            alumno = AlumnoDto(),
+        )
+    )
 
     Scaffold(
         topBar = {
@@ -57,38 +66,33 @@ fun ValidacionView(navController: NavHostController, scholaGateViewModel: Schola
 @Composable
 fun ContentValidacion(pad: PaddingValues, scholaGateViewModel: ScholaGateViewModel) {
 
+    val listaAlumnos = scholaGateViewModel._listaAlumnos
     val listaGrupos = scholaGateViewModel._listaGrupos
     val selectedAlumno = remember { mutableStateOf<AlumnoDto?>(null) }
     val selectedGrupo = remember { mutableStateOf<String?>(null) }
 
-    LectorNFCAnimacion(pad)
+    when (scholaGateViewModel.uiNfcViewState.collectAsState().value.NFCState is NFCState.SuccessRead) {
+        true -> {
+            Log.i("ValidacionView", "selectedAlumno: ${scholaGateViewModel._idAlumno}")
 
-    if (scholaGateViewModel.uiNfcViewState.collectAsState().value.NFCState is NFCState.SuccessRead){
+            selectedAlumno.value = listaAlumnos.find { it.id == scholaGateViewModel._idAlumno }
+            selectedGrupo.value = listaGrupos[selectedAlumno.value?.idGrupo]
 
-        selectedAlumno.value = scholaGateViewModel.uiNfcViewState.collectAsState().value.alumno
-
-        selectedGrupo.value = listaGrupos.get(selectedAlumno.value?.idGrupo)
-
-        if (selectedAlumno.value != null && selectedGrupo.value != null) {
-            Dialog(
-                onDismissRequest = {
-                    scholaGateViewModel.updateNFCState(
-                        scholaGateViewModel.uiNfcViewState.value.copy(
-                            NFCState = NFCState.ReadyToRead,
-                            alumno = AlumnoDto()
-                        )
-                    )
+            if (selectedAlumno.value != null && selectedGrupo.value != null) {
+                Log.i("ValidacionView", "selectedAlumno: $selectedAlumno")
+                Dialog(
+                    onDismissRequest = {
+                    }
+                ) {
+                    CardAlumno(selectedAlumno.value!!, selectedGrupo.value!!) {
+                    }
                 }
-            ) {
-                CardAlumno(selectedAlumno.value!!, selectedGrupo.value!!) {
-                    scholaGateViewModel.updateNFCState(
-                        scholaGateViewModel.uiNfcViewState.value.copy(
-                            NFCState = NFCState.ReadyToRead,
-                            alumno = AlumnoDto()
-                        )
-                    )
-                }
+            }else{
+                Text("No se ha encontrado el alumno")
             }
+        }
+        false -> {
+            LectorNFCAnimacion(pad)
         }
     }
 }

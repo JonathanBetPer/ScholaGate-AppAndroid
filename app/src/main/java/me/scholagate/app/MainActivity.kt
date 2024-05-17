@@ -62,12 +62,12 @@ class MainActivity : ComponentActivity() {
             }
 
             NFCState.Loading -> {
-                Log.e("NFC", "Loading")
+                Log.i("NFC", "Loading")
                 Toast.makeText(this, "No hay nada que leer ni escribir", Toast.LENGTH_SHORT).show()
             }
 
             NFCState.ReadyToRead -> {
-                Log.e("NFC", "Ready to read")
+                Log.i("NFC", "Ready to read")
 
                 val idAlumno = nfcManager.readTag(intent)
 
@@ -75,29 +75,28 @@ class MainActivity : ComponentActivity() {
                     scholaGateViewModel.updateNFCState(
                         scholaGateViewModel.uiNfcViewState.value.copy(
                             NFCState = NFCState.SuccessRead(idAlumno),
-                            alumno = scholaGateViewModel.getAlumno(idAlumno)
                         )
                     )
+                    scholaGateViewModel.onValueIdAlumno(idAlumno)
 
                 } else {
                     scholaGateViewModel.updateNFCState(
                         scholaGateViewModel.uiNfcViewState.value.copy(
-                            NFCState = NFCState.Error("Error Leyendo NFC"),
-                            alumno = AlumnoDto()
+                            NFCState = NFCState.Error("Error Leyendo NFC")
                         )
                     )
                 }
             }
 
             NFCState.SuccessWrite -> {
-                Log.e("NFC", "SuccessWrite")
+                Log.i("NFC", "SuccessWrite")
 
-                Toast.makeText(this, "Tag Escrita", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "NFC Tag Escrita", Toast.LENGTH_SHORT).show()
             }
 
             is NFCState.ReadyToWrite -> {
 
-                Log.e("NFC", "Ready to write")
+                Log.i("NFC", "Ready to write")
 
                 if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action){
                     val tag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -119,12 +118,12 @@ class MainActivity : ComponentActivity() {
             }
 
             is NFCState.SuccessRead -> {
-                Log.e("NFC", "SuccessRead")
+                Log.i("NFC", "SuccessRead")
             }
 
             is NFCState.Error -> {
-                Log.e("NFC", "Error")
                 val mensaje = (scholaGateViewModel.uiNfcViewState.value.NFCState as NFCState.Error).message
+                Log.e("NFC", "Error $mensaje")
                 Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
             }
         }

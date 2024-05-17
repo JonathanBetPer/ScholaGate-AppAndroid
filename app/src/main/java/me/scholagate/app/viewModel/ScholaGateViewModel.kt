@@ -3,22 +3,18 @@ package me.scholagate.app.viewModel
 import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import me.scholagate.app.network.NetworkConnectivityService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.scholagate.app.datastore.StoreCredenciales
-import me.scholagate.app.dtos.AdjuntoDto
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.dtos.CredencialesDto
 import me.scholagate.app.dtos.ReporteDto
@@ -32,13 +28,11 @@ import me.scholagate.app.states.UiAppState
 import me.scholagate.app.states.UiHomeViewState
 import me.scholagate.app.states.UiLoginViewState
 import me.scholagate.app.states.UiNFCViewState
-import me.scholagate.app.utils.NetworkStatus
 import javax.inject.Inject
 
 @HiltViewModel
 class ScholaGateViewModel @Inject constructor(
     private val repository: SGRepository,
-    networkConnectivityService: NetworkConnectivityService,
     val storeCredenciales: StoreCredenciales
     ) : ViewModel() {
 
@@ -66,12 +60,6 @@ class ScholaGateViewModel @Inject constructor(
         }
     }
 
-    val networkStatus: StateFlow<NetworkStatus> = networkConnectivityService.networkStatus.stateIn(
-        initialValue = NetworkStatus.Unknown,
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000)
-    )
-
     private val _uiAppState = MutableStateFlow(
         UiAppState(
             AppState.Loading,
@@ -95,7 +83,8 @@ class ScholaGateViewModel @Inject constructor(
     private val _uiNfcViewState = MutableStateFlow(
         UiNFCViewState(
             NFCState.None,
-            AlumnoDto()
+            AlumnoDto(),
+            -1
         )
     )
 
@@ -120,14 +109,6 @@ class ScholaGateViewModel @Inject constructor(
     var _usuario by mutableStateOf(UsuarioDto())
     private set
 
-    fun onValueUsuario(value: UsuarioDto) = run { _usuario = _usuario.copy(
-        id = value.id,
-        nombre = value.nombre,
-        correo = value.correo,
-        rol = value.rol
-    ) }
-
-
     var _reporte by mutableStateOf(ReporteDto())
         private set
     fun onValueReporte(value: ReporteDto) = run { _reporte = _reporte.copy(
@@ -139,38 +120,17 @@ class ScholaGateViewModel @Inject constructor(
         fecha = value.fecha
     ) }
 
-    var _adjunto by mutableStateOf(AdjuntoDto())
+    var _idAlumno by mutableIntStateOf(-1)
         private set
+    fun onValueIdAlumno(value: Int) = run { _idAlumno = value }
 
-    fun onValueAdjunto(value: AdjuntoDto) = run { _adjunto = _adjunto.copy(
-        id = value.id,
-        idReporte = value.idReporte,
-        nombre = value.nombre,
-        foto = value.foto
-    ) }
+
 
     var _listaAlumnos by mutableStateOf(listOf<AlumnoDto>())
         private set
 
-    fun onValueListaAlumnos(value: List<AlumnoDto>) = run { _listaAlumnos = value }
-
     var _listaGrupos by mutableStateOf(mapOf<Int, String>())
         private set
-
-    fun onValueListaGrupos(value: HashMap<Int, String>) = run { _listaGrupos = value }
-
-    var _alumno by mutableStateOf(AlumnoDto())
-        private set
-
-    fun onValueAlumno(value: AlumnoDto) = run { _alumno = _alumno.copy(
-        id = value.id,
-        idGrupo = value.idGrupo,
-        nombre = value.nombre,
-        fechaNac = value.fechaNac,
-        foto = value.foto,
-
-    ) }
-
 
     fun fetchLogin(email: String, password: String) {
 
@@ -238,28 +198,6 @@ class ScholaGateViewModel @Inject constructor(
         }
     }
 
-    fun fetchAdjunto(adjuntoDto: AdjuntoDto) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.postAdjunto(uiLoginViewState.value.token, adjuntoDto)
-            if (result != null) {
-                _adjunto = result
-            } else {
-                Log.e("Error", "No se pudo obtener el alumno")
-            }
-        }
-    }
-
-    fun fetchAlumno(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.getAlumno(uiLoginViewState.value.token, id)
-            if (result != null) {
-                _alumno = result
-            } else {
-                Log.e("Error", "No se pudo obtener el alumno")
-            }
-        }
-    }
-
     fun fetchAlumnos() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = repository.getAlumnos(uiLoginViewState.value.token)
@@ -297,11 +235,6 @@ class ScholaGateViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             storeCredenciales.borrarCredenciales()
         }
-    }
-
-    fun getAlumno(idAlumno: Int): AlumnoDto {
-        fetchAlumno(idAlumno)
-        return _alumno
     }
 }
 

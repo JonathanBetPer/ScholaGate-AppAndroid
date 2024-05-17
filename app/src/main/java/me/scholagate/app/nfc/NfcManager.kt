@@ -22,10 +22,11 @@ class NfcManager {
             val messages: List<NdefMessage> = rawMessages.map { it as NdefMessage }
             val record = messages[0].records[0]
             val payload = record.payload
-            Log.e("NFC Read", "Payload id: " + payload[0].toInt())
+            Log.i("NFC Read", "Payload id: " + payload[0].toInt())
 
             return payload[0].toInt()
         }
+        Log.e("NFC Read", "No NFC message")
         return null
     }
 
@@ -53,22 +54,4 @@ class NfcManager {
             false
         }
     }
-
-    fun formatTag(tag: Tag?, message: NdefMessage) {
-        val ndefFormatable = NdefFormatable.get(tag)
-
-        if (ndefFormatable != null) {
-            try {
-                ndefFormatable.connect()
-                ndefFormatable.format(message)
-                ndefFormatable.close()
-            } catch (e: Exception) {
-                Log.e("NFC", "Error writing tag", e)
-            }
-        } else {
-            Log.e("NFC", "Tag is not formatable")
-        }
-    }
-
-
 }

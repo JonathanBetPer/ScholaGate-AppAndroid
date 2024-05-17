@@ -25,7 +25,7 @@ interface ScholaGateAPI {
     @GET(ENDPOINT_USUARIO)
     suspend fun  getUsuario(@Header("Authorization") token: String ): Response<UsuarioDto>
 
-    @GET("$ENDPOINT_ALUMNO{id}")
+    @GET("$ENDPOINT_ALUMNO/{id}")
     suspend fun  getAlumno(@Header("Authorization") token: String, @Path(value="id") id: Int ): Response<AlumnoDto>
 
     @GET(ENDPOINT_ALUMNOS)
