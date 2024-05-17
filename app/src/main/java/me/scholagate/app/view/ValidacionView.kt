@@ -1,6 +1,8 @@
 package me.scholagate.app.view
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.window.Dialog
@@ -24,6 +28,8 @@ import me.scholagate.app.components.LectorNFCAnimacion
 import me.scholagate.app.components.MainTitle
 import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.states.NFCState
+import me.scholagate.app.ui.theme.SgRojoPastel
+import me.scholagate.app.ui.theme.SgVerdePastel
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,29 +76,44 @@ fun ContentValidacion(pad: PaddingValues, scholaGateViewModel: ScholaGateViewMod
     val listaGrupos = scholaGateViewModel._listaGrupos
     val selectedAlumno = remember { mutableStateOf<AlumnoDto?>(null) }
     val selectedGrupo = remember { mutableStateOf<String?>(null) }
+    val mostrarDialog = remember { mutableStateOf(false) }
+    val color = remember { mutableStateOf(Color.Black) }
 
-    when (scholaGateViewModel.uiNfcViewState.collectAsState().value.NFCState is NFCState.SuccessRead) {
-        true -> {
-            Log.i("ValidacionView", "selectedAlumno: ${scholaGateViewModel._idAlumno}")
+    if (scholaGateViewModel._idAlumno != -1) {
+        mostrarDialog.value = true
+    }
 
-            selectedAlumno.value = listaAlumnos.find { it.id == scholaGateViewModel._idAlumno }
-            selectedGrupo.value = listaGrupos[selectedAlumno.value?.idGrupo]
 
-            if (selectedAlumno.value != null && selectedGrupo.value != null) {
-                Log.i("ValidacionView", "selectedAlumno: $selectedAlumno")
-                Dialog(
-                    onDismissRequest = {
-                    }
-                ) {
-                    CardAlumno(selectedAlumno.value!!, selectedGrupo.value!!) {
-                    }
+    LectorNFCAnimacion(pad, colorBackgroud = color.value)
+
+
+    if (mostrarDialog.value){
+        Log.i("ValidacionView", "selectedAlumno: ${scholaGateViewModel._idAlumno}")
+
+        selectedAlumno.value = listaAlumnos.find { it.id == scholaGateViewModel._idAlumno }
+        selectedGrupo.value = listaGrupos[selectedAlumno.value?.idGrupo]
+
+        if (selectedAlumno.value != null && selectedGrupo.value != null) {
+
+
+            if (selectedAlumno.value?.isMayorDeEdad() == true) color.value = SgVerdePastel
+            else color.value = SgRojoPastel
+
+
+            Dialog(
+                onDismissRequest = {
+                    mostrarDialog.value = false
+                    scholaGateViewModel.onValueIdAlumno(-1)
+                    color.value = Color.Black
                 }
-            }else{
-                Text("No se ha encontrado el alumno")
+            ) {
+                CardAlumno(selectedAlumno.value!!, selectedGrupo.value!!) {
+                    mostrarDialog.value = false
+                    scholaGateViewModel.onValueIdAlumno(-1)
+                    color.value = Color.Black
+                }
             }
         }
-        false -> {
-            LectorNFCAnimacion(pad)
-        }
+
     }
 }

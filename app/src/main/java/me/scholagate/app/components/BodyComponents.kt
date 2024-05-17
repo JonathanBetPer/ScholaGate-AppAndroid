@@ -217,7 +217,6 @@ fun CardAlumno(alumno: AlumnoDto, grupo: String, onClick: () -> Unit){
 
     Column(
         modifier = Modifier
-            .padding(25.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(25.dp))
             .background(Color.DarkGray)
@@ -329,7 +328,7 @@ fun AlertDialogPersonalizado(
 }
 
 @Composable
-fun LectorNFCAnimacion(pad: PaddingValues){
+fun LectorNFCAnimacion(pad: PaddingValues, colorBackgroud: Color = Color.DarkGray){
     val alpha = remember { Animatable(0f) } // Empieza completamente transparente
 
     LaunchedEffect(key1 = true) {
@@ -354,9 +353,8 @@ fun LectorNFCAnimacion(pad: PaddingValues){
     Column(
         modifier = Modifier
             .padding(pad)
-            .padding(50.dp)
             .fillMaxSize()
-            .background(Color.DarkGray),
+            .background(colorBackgroud),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
