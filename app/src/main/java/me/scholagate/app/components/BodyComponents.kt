@@ -74,14 +74,18 @@ fun MainTitle(title: String, color : Color = Color.White) {
 }
 
 @Composable
-fun TextFieldGenerico(value: String, onValueChange: (String) -> Unit, label: String, modifier: Modifier = Modifier) {
+fun TextFieldGenerico(value: String, onValueChange: (String) -> Unit,
+                      label: String, modifier: Modifier = Modifier,
+                      minLines: Int = 1, maxLines: Int = 1,
+                      isError: Boolean = false){
     OutlinedTextField(
         value = value,
-        minLines = 1,
-        maxLines = 1,
+        minLines = minLines,
+        maxLines = maxLines,
         onValueChange = onValueChange,
         label = { Text(text = label) },
-        modifier = modifier
+        isError = isError,
+        modifier = modifier.fillMaxWidth(),
     )
 }
 
@@ -325,47 +329,6 @@ fun AlertDialogPersonalizado(
             }
         }
     )
-}
-
-@Composable
-fun LectorNFCAnimacion(pad: PaddingValues, colorBackgroud: Color = Color.DarkGray){
-    val alpha = remember { Animatable(0f) } // Empieza completamente transparente
-
-    LaunchedEffect(key1 = true) {
-        while (true) {
-            alpha.animateTo(
-                targetValue = 0.8f,
-                animationSpec = tween(
-                    durationMillis = 2500, // Duración de la animación en milisegundos
-                    easing = LinearEasing // Tipo de interpolación
-                )
-            )
-            alpha.animateTo(
-                targetValue = 0.15f,
-                animationSpec = tween(
-                    durationMillis = 2500, // Duración de la animación en milisegundos
-                    easing = LinearEasing
-                )
-            )
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .padding(pad)
-            .fillMaxSize()
-            .background(colorBackgroud),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    )
-    {
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.nfc_svgrepo_com),
-            contentDescription = "Validación NFC",
-            tint = Color.White.copy(alpha = alpha.value),
-            modifier = Modifier.size(200.dp)
-        )
-    }
 }
 
 @Composable

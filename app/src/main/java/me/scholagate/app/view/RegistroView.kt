@@ -1,5 +1,6 @@
 package me.scholagate.app.view
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,7 +31,11 @@ import androidx.navigation.NavHostController
 import me.scholagate.app.R
 import me.scholagate.app.components.BotonCambioSeleccion
 import me.scholagate.app.components.MainTitle
+import me.scholagate.app.components.MiniCardAlumno
+import me.scholagate.app.components.MiniNFCAnimacion
 import me.scholagate.app.components.TextFieldGenerico
+import me.scholagate.app.dtos.AlumnoDto
+import me.scholagate.app.dtos.ReporteDto
 import me.scholagate.app.ui.theme.SgAzul
 import me.scholagate.app.ui.theme.SgNaranja
 import me.scholagate.app.viewModel.ScholaGateViewModel
@@ -42,7 +48,7 @@ fun RegistroView(navController: NavHostController, scholaGateViewModel: ScholaGa
             TopAppBar(
                 title = {
                     MainTitle(
-                        title = "Registro",
+                        title = "Crear Reporte",
                         color = MaterialTheme.colorScheme.onPrimary
                     ) 
                 },
@@ -61,19 +67,42 @@ fun RegistroView(navController: NavHostController, scholaGateViewModel: ScholaGa
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    Toast.makeText(navController.context, "Añadir Adjunto No Disponible", Toast.LENGTH_SHORT).show()
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_note_add_24),
+                    contentDescription = "Añadir Adjunto"
+                )
+            }
         }
     ) {
-        ContentRegistro(pad = it, scholaGateViewModel = scholaGateViewModel)
+        ContentRegistro(pad = it, scholaGateViewModel = scholaGateViewModel, navController)
     }
 }
 
 
 
 @Composable
-fun ContentRegistro(pad: PaddingValues, scholaGateViewModel: ScholaGateViewModel) {
+fun ContentRegistro(
+    pad: PaddingValues,
+    scholaGateViewModel: ScholaGateViewModel,
+    navController: NavHostController
+) {
 
     val tipoRegistro = remember { mutableStateOf(true) }
     val motivoValue = remember { mutableStateOf("") }
+    val errorMotivo = remember { mutableStateOf(false) }
+    val listaAlumnos = scholaGateViewModel._listaAlumnos
+    val listaGrupos = scholaGateViewModel._listaGrupos
+    val selectedAlumno = remember { mutableStateOf<AlumnoDto?>(null) }
+    val selectedGrupo = remember { mutableStateOf<String?>(null) }
+    val mostrarDialog = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -114,17 +143,58 @@ fun ContentRegistro(pad: PaddingValues, scholaGateViewModel: ScholaGateViewModel
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = CenterHorizontally
         ) {
+
+            if (scholaGateViewModel._idAlumno != -1) {
+                mostrarDialog.value = true
+            }
+
+            if (mostrarDialog.value){
+
+                selectedAlumno.value = listaAlumnos.find { it.id == scholaGateViewModel._idAlumno }
+                selectedGrupo.value = listaGrupos[selectedAlumno.value?.idGrupo]
+
+                if (selectedAlumno.value != null && selectedGrupo.value != null) {
+                    MiniCardAlumno(alumno = selectedAlumno.value!!, grupo = selectedGrupo.value!!) {}
+                }
+
+            } else {
+                MiniNFCAnimacion()
+            }
+
             TextFieldGenerico(
                 value = motivoValue.value,
                 onValueChange = {motivoValue.value = it},
                 label = "Motivo",
+                minLines = 3,
+                maxLines = 5,
+                isError = errorMotivo.value,
             )
 
             Button(
                 modifier = Modifier
                     .align(CenterHorizontally)
                     .padding(top = 10.dp),
-                onClick = { /*TODO*/ },
+                onClick = {
+                    errorMotivo.value = motivoValue.value.isEmpty()
+
+                    if (motivoValue.value.isNotEmpty() && selectedAlumno.value != null) {
+
+                        val reporte = ReporteDto(
+                            id = 0,
+                            idAlumno = selectedAlumno.value!!.id,
+                            idUsuario = scholaGateViewModel._usuario.id,
+                            tipo = if (tipoRegistro.value) "Entrada" else "Salida",
+                            motivo = motivoValue.value
+                        )
+
+                        val reporteHecho = scholaGateViewModel.fetchReporte(reporte)
+
+                        if (scholaGateViewModel._reporte.id != 0L) {
+                            Toast.makeText(navController.context, "Reporte Guardado", Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
+                        }
+                    }
+                },
                 enabled = true,
             ) {
                 Text(text = "Guardar")

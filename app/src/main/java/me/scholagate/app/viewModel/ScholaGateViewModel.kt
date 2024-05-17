@@ -195,6 +195,7 @@ class ScholaGateViewModel @Inject constructor(
             } else {
                 Log.e("Error", "No se pudo obtener el alumno")
             }
+            return@launch
         }
     }
 
