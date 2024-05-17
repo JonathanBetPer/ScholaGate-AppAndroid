@@ -70,14 +70,15 @@ class MainActivity : ComponentActivity() {
                 Log.i("NFC", "Ready to read")
 
                 val idAlumno = nfcManager.readTag(intent)
-
+                Log.i("NFC", "idAlumno: $idAlumno")
                 if (idAlumno != null) {
                     scholaGateViewModel.updateNFCState(
                         scholaGateViewModel.uiNfcViewState.value.copy(
-                            NFCState = NFCState.SuccessRead(idAlumno),
+                           // NFCState = NFCState.SuccessRead(idAlumno),
                         )
                     )
-                    scholaGateViewModel.onValueIdAlumno(idAlumno)
+
+                    scholaGateViewModel.onValueIdAlumno(idAlumno.toInt())
 
                 } else {
                     scholaGateViewModel.updateNFCState(
@@ -107,7 +108,7 @@ class MainActivity : ComponentActivity() {
 
                     val alumno = (scholaGateViewModel.uiNfcViewState.value.NFCState as NFCState.ReadyToWrite).alumno
 
-                    if (nfcManager.writeTag(tag, alumno)){
+                    if (nfcManager.writeTag(tag, alumno.id.toString())){
                         scholaGateViewModel.updateNFCState(
                             scholaGateViewModel.uiNfcViewState.value.copy(
                                 NFCState = NFCState.SuccessWrite

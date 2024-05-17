@@ -1,5 +1,6 @@
 package me.scholagate.app.nfc
 
+import android.content.ContentValues
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
@@ -8,36 +9,44 @@ import android.nfc.Tag
 import android.nfc.tech.Ndef
 import android.nfc.tech.NdefFormatable
 import android.util.Log
+import android.widget.Toast
 import me.scholagate.app.dtos.AlumnoDto
 import java.io.IOException
+import java.nio.charset.Charset
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 
 class NfcManager {
+    fun readTag(intent: Intent): String? {
+            val rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
+            if (rawMessages != null) {
+                val messages = rawMessages.map { it as NdefMessage }
+                val payload = messages[0].records[0].payload
+                val textEncoding = if (payload[0].toInt() and 128 == 0) "UTF-8" else "UTF-16"
 
-    fun readTag(intent: Intent): Int? {
-        val rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
-        if (rawMessages != null) {
-            val messages: List<NdefMessage> = rawMessages.map { it as NdefMessage }
-            val record = messages[0].records[0]
-            val payload = record.payload
-            Log.i("NFC Read", "Payload id: " + payload[0].toInt())
+                val languageSize = payload[0].toInt() and 63
 
-            return payload[0].toInt()
-        }
-        Log.e("NFC Read", "No NFC message")
+                val result = String(payload, languageSize + 1, payload.size - languageSize - 1, Charset.forName(textEncoding))
+                Log.d("NFC", "Read tag: $result")
+                return result
+            }
+
         return null
     }
 
-    fun writeTag(tag: Tag?, alumno: AlumnoDto): Boolean {
+    fun writeTag(tag: Tag?, text: String): Boolean {
 
-        val alumnoBytes = alumno.id.toString().toByteArray()
+        val languageCode = "es"
 
-        val payload = ByteArray(1 + alumnoBytes.size)
+        val textBytes = text.toByteArray()
+        val languageBytes = languageCode.toByteArray(Charsets.US_ASCII)
 
-        payload[0] = alumnoBytes.size.toByte()
-        System.arraycopy(alumnoBytes, 0, payload, 1, alumnoBytes.size)
+        val payload = ByteArray(1 + languageBytes.size + textBytes.size)
+
+        payload[0] = languageBytes.size.toByte()
+        System.arraycopy(languageBytes, 0, payload, 1, languageBytes.size)
+        System.arraycopy(textBytes, 0, payload, 1 + languageBytes.size, textBytes.size)
 
         val record = NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, ByteArray(0), payload)
         val message = NdefMessage(arrayOf(record))
