@@ -36,9 +36,9 @@ Para instalar la aplicación ScholaGate en tu dispositivo Android, sigue estos p
 
 ## Enlaces a las otras partes del proyecto
 
-[API](https://github.com/JonathanBetPer/ScholaGate-API)
+[API](https://github.com/JonathanBetPer/ScholaGate-API) en Spring Boot
 
-[App Web](https://github.com/carlosaldea3/ScholaGate-AppWeb)
+[App Web](https://github.com/carlosaldea3/ScholaGate-AppWeb) en React
 
 
 ## Licencia
