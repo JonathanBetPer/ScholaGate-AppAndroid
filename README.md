@@ -20,7 +20,6 @@ Esta una aplicación Android desarrollada en Kotlin, parte del proyecto final, q
 
 
 ## Instalación
-# Instalación de la Aplicación
 
 Para instalar la aplicación ScholaGate en tu dispositivo Android, sigue estos pasos:
 
