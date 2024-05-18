@@ -4,23 +4,20 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -31,14 +28,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import me.scholagate.app.R
-import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.ui.theme.SgGris
-
 
 @Composable
 fun ShowLoading(){
@@ -77,7 +71,7 @@ fun LoadingApp(){
 }
 
 @Composable
-fun LectorNFCAnimacion(pad: PaddingValues, colorBackgroud: Color = Color.DarkGray){
+fun LectorNFCAnimacion(pad: PaddingValues, colorBackgroud: Color = MaterialTheme.colorScheme.background){
     val alpha = remember { Animatable(0f) } // Empieza completamente transparente
 
     LaunchedEffect(key1 = true) {
@@ -85,14 +79,14 @@ fun LectorNFCAnimacion(pad: PaddingValues, colorBackgroud: Color = Color.DarkGra
             alpha.animateTo(
                 targetValue = 0.8f,
                 animationSpec = tween(
-                    durationMillis = 2500, // Duración de la animación en milisegundos
-                    easing = LinearEasing // Tipo de interpolación
+                    durationMillis = 2500,
+                    easing = LinearEasing
                 )
             )
             alpha.animateTo(
                 targetValue = 0.15f,
                 animationSpec = tween(
-                    durationMillis = 2500, // Duración de la animación en milisegundos
+                    durationMillis = 2500,
                     easing = LinearEasing
                 )
             )
@@ -111,7 +105,7 @@ fun LectorNFCAnimacion(pad: PaddingValues, colorBackgroud: Color = Color.DarkGra
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.nfc_svgrepo_com),
             contentDescription = "Validación NFC",
-            tint = Color.White.copy(alpha = alpha.value),
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = alpha.value),
             modifier = Modifier.size(200.dp)
         )
     }
@@ -144,16 +138,19 @@ fun MiniNFCAnimacion(){
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .size(115.dp)
+            .border(5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(25.dp))
             .clip(RoundedCornerShape(25.dp))
-            .background(MaterialTheme.colorScheme.surfaceTint)
             .padding(8.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
         ) {
 
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.nfc_svgrepo_com),
             contentDescription = "Crear Registro NFC",
-            tint = Color.White.copy(alpha = alpha.value),
-            modifier = Modifier.size(50.dp)
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = alpha.value),
+            modifier = Modifier.size(75.dp)
         )
     }
 }

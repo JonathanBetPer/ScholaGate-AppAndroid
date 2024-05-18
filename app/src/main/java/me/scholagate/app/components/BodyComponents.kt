@@ -1,13 +1,11 @@
 package me.scholagate.app.components
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -24,8 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,10 +30,7 @@ import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,8 +49,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.protobuf.Internal.BooleanList
 import me.scholagate.app.R
 import me.scholagate.app.dtos.AlumnoDto
+import kotlin.random.Random
 
 @Composable
 fun SpaceV(size: Dp = 5.dp){
@@ -69,8 +66,8 @@ fun SpaceH(size: Dp = 5.dp){
 }
 
 @Composable
-fun MainTitle(title: String, color : Color = Color.White) {
-    Text(text = title, color = color, fontWeight = FontWeight.Bold)
+fun MainTitle(title: String) {
+    Text(text = title, fontWeight = FontWeight.Bold)
 }
 
 @Composable
@@ -89,30 +86,6 @@ fun TextFieldGenerico(value: String, onValueChange: (String) -> Unit,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBarLogo(){
-    TopAppBar(
-        title = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconImagotipo()
-            }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceTint,
-        ),
-        actions = {},
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-    )
-}
 
 @Composable
 fun CheckBoxLogIn( checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: Modifier = Modifier){
@@ -149,7 +122,8 @@ fun PasswordField(password: String, onValueChange: (String) -> Unit, modifier: M
     OutlinedTextField(
         value = password,
         onValueChange =  onValueChange,
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
+        maxLines = 1,
         placeholder = { Text(text = "Contraseña") },
         label = { Text(text = "Contraseña") },
         trailingIcon = {
@@ -158,7 +132,7 @@ fun PasswordField(password: String, onValueChange: (String) -> Unit, modifier: M
             }) {
                 Icon(
                     painter = icon,
-                    contentDescription = "Visibility Icon"
+                    contentDescription = "Visibilidad Icon"
                 )
             }
         },
@@ -198,7 +172,7 @@ fun BotonPrincipalIcon(idIcon: Int, description: String, enabled: Boolean? = tru
                     .size(100.dp)
             )
 
-            Text(text = description, fontWeight = FontWeight.Bold)
+            Text(text = description, fontSize = 16.sp,  fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -223,7 +197,7 @@ fun CardAlumno(alumno: AlumnoDto, grupo: String, onClick: () -> Unit){
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(25.dp))
-            .background(Color.DarkGray)
+            .background(MaterialTheme.colorScheme.surface)
             .clickable(
                 enabled = true,
                 onClick = onClick
@@ -236,7 +210,7 @@ fun CardAlumno(alumno: AlumnoDto, grupo: String, onClick: () -> Unit){
 
         Text(text = alumno.nombre, fontWeight = FontWeight.Bold)
         Text(text =grupo)
-        Text(text = alumno.fechaNac)
+        Text(text = alumno.fechaToString())
         SpaceV(15.dp)
 
     }
@@ -245,15 +219,31 @@ fun CardAlumno(alumno: AlumnoDto, grupo: String, onClick: () -> Unit){
 
 
 @Composable
-fun MiniCardAlumno(alumno: AlumnoDto, grupo: String , onClick: () -> Unit) {
+fun MiniCardAlumno(alumno: AlumnoDto, grupo: String, isSelected: Boolean = true, onClick: () -> Unit) {
+
+    var selected by remember { mutableStateOf(isSelected) }
+
+    val color = if (selected) {
+        MaterialTheme.colorScheme.inversePrimary
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
 
     Row(
         modifier = Modifier
             .clickable(
                 enabled = true,
-                onClick = onClick
+                onClick = {
+                    selected = !selected
+                    onClick()
+                }
             )
             .fillMaxWidth()
+            .border(
+                width = 5.dp,
+                color = color,
+                shape = RoundedCornerShape(25.dp)
+            )
             .clip(RoundedCornerShape(25.dp))
             .background(MaterialTheme.colorScheme.surfaceTint)
             .padding(8.dp),
@@ -265,7 +255,7 @@ fun MiniCardAlumno(alumno: AlumnoDto, grupo: String , onClick: () -> Unit) {
         Column {
             Text(text = alumno.nombre, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = alumno.fechaNac)
+            Text(text = alumno.fechaToString())
             Text(text = grupo)
         }
     }
@@ -273,10 +263,14 @@ fun MiniCardAlumno(alumno: AlumnoDto, grupo: String , onClick: () -> Unit) {
 
 @Composable
 fun IconoAlumno(size: Dp, nombreAlumno: String){
+
+    val random = Random(nombreAlumno.length)
+    val randomColor = Color(random.nextInt(256), random.nextInt(256), random.nextInt(256))
+
     Icon(
         painter = painterResource(id = R.drawable.baseline_account_circle_24),
-        contentDescription = nombreAlumno,
-        tint = Color.Unspecified,
+        contentDescription = "Icono de $nombreAlumno",
+        tint = randomColor,
         modifier = Modifier
             .padding(15.dp)
             .size(size)
@@ -332,24 +326,52 @@ fun AlertDialogPersonalizado(
 }
 
 @Composable
-fun BotonCambioSeleccion(texto: String, enabled: Boolean, color1: Color, color2: Color, onClick: () -> Unit){
-    Button(
-        modifier = Modifier
-            .clip(RoundedCornerShape(15.dp)),
+fun BotonCambioSeleccion(texto: String, enabled: Boolean, onClick: () -> Unit) {
+
+    ElevatedButton(
+        onClick = onClick ,
         enabled = enabled,
-        onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (enabled) color1 else color2,
-            contentColor = Color.White,
-            disabledContainerColor = if (enabled) color1 else color2,
-            disabledContentColor = Color.Black
-        )
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.secondary,
+            disabledContentColor = MaterialTheme.colorScheme.onSecondary
+        ),
+        modifier = Modifier
+            .clip(RoundedCornerShape(3.dp))
     ) {
         Text(
-            modifier = Modifier.padding(10.dp),
             text = texto,
+            modifier = Modifier.padding(top = 5.dp, start = 25.dp, end = 25.dp, bottom = 5.dp),
             fontWeight = FontWeight.W900,
-            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+            fontSize = 16.sp,
         )
+    }
+}
+
+@Composable
+fun BotonPrincipal(
+    modifier: Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    function: @Composable () -> Unit
+){
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered = interactionSource.collectIsHoveredAsState().value
+
+    Button(
+        modifier = modifier
+            .clip(RoundedCornerShape(15.dp)),
+        interactionSource = interactionSource,
+        onClick = onClick,
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isHovered) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.secondary,
+            disabledContentColor = MaterialTheme.colorScheme.onSecondary
+        ),
+    ) {
+        function()
     }
 }
