@@ -1,22 +1,18 @@
 package me.scholagate.app.view
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -45,8 +41,7 @@ fun ValidacionView(navController: NavHostController, scholaGateViewModel: Schola
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { MainTitle(title = "Validación",
-                color = MaterialTheme.colorScheme.onPrimary ) },
+            TopAppBar(title = { MainTitle(title = "Validación")},
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceTint
                 ),
@@ -72,12 +67,13 @@ fun ValidacionView(navController: NavHostController, scholaGateViewModel: Schola
 @Composable
 fun ContentValidacion(pad: PaddingValues, scholaGateViewModel: ScholaGateViewModel) {
 
+    val colorBackgroud = MaterialTheme.colorScheme.background
     val listaAlumnos = scholaGateViewModel._listaAlumnos
     val listaGrupos = scholaGateViewModel._listaGrupos
     val selectedAlumno = remember { mutableStateOf<AlumnoDto?>(null) }
     val selectedGrupo = remember { mutableStateOf<String?>(null) }
     val mostrarDialog = remember { mutableStateOf(false) }
-    val color = remember { mutableStateOf(Color.Black) }
+    val color = remember { mutableStateOf(colorBackgroud) }
 
     if (scholaGateViewModel._idAlumno != -1) {
         mostrarDialog.value = true
@@ -99,18 +95,17 @@ fun ContentValidacion(pad: PaddingValues, scholaGateViewModel: ScholaGateViewMod
             if (selectedAlumno.value?.isMayorDeEdad() == true) color.value = SgVerdePastel
             else color.value = SgRojoPastel
 
-
             Dialog(
                 onDismissRequest = {
                     mostrarDialog.value = false
                     scholaGateViewModel.onValueIdAlumno(-1)
-                    color.value = Color.Black
+                    color.value = colorBackgroud
                 }
             ) {
                 CardAlumno(selectedAlumno.value!!, selectedGrupo.value!!) {
                     mostrarDialog.value = false
                     scholaGateViewModel.onValueIdAlumno(-1)
-                    color.value = Color.Black
+                    color.value = colorBackgroud
                 }
             }
         }

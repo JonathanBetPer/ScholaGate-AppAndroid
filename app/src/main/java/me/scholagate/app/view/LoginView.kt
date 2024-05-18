@@ -4,11 +4,18 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -19,16 +26,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.scholagate.app.components.BotonPrincipal
 import me.scholagate.app.components.CheckBoxLogIn
+import me.scholagate.app.components.IconImagotipo
 import me.scholagate.app.components.PasswordField
 import me.scholagate.app.components.ShowLoading
 import me.scholagate.app.components.SpaceV
 import me.scholagate.app.components.TextFieldGenerico
-import me.scholagate.app.components.TopBarLogo
 import me.scholagate.app.dtos.CredencialesDto
 import me.scholagate.app.states.LoginState
 import me.scholagate.app.viewModel.ScholaGateViewModel
@@ -94,9 +104,9 @@ fun ContentLogin(
 
     Column(
         Modifier
-            .fillMaxSize()
             .padding(pad)
-            .padding(8.dp),
+            .padding(20.dp)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Center
 
     ){
@@ -123,11 +133,12 @@ fun ContentLogin(
 
         SpaceV(20.dp)
 
-        Button(
-            content = {
-                Text(text = "Iniciar sesión")
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+
+        BotonPrincipal(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            enabled = true,
             onClick = {
                 scholaGateViewModel.fetchLogin(username.value, password.value)
 
@@ -137,6 +148,36 @@ fun ContentLogin(
                     }
                 }
             }
-        )
+
+        ){
+            Text(
+                text = "Iniciar sesión",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBarLogo(){
+    TopAppBar(
+        title = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconImagotipo()
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
+        actions = {},
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+    )
 }

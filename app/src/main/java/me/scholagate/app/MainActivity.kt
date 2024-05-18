@@ -11,6 +11,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import me.scholagate.app.navigation.NavManager
 import me.scholagate.app.nfc.NfcManager
 import me.scholagate.app.states.NFCState
 import me.scholagate.app.ui.theme.ScholaGateTheme
+import me.scholagate.app.ui.theme.SgGris
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
 @AndroidEntryPoint
@@ -40,11 +42,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
+
         setContent {
 
             ScholaGateTheme {
+                enableEdgeToEdge()
                 Surface(
-                    color = MaterialTheme.colorScheme.background,
+                    color = SgGris,
                     modifier = Modifier.fillMaxSize()
                 ) {
                     NavManager(scholaGateViewModel)

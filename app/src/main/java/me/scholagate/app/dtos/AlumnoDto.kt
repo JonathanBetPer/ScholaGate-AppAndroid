@@ -2,6 +2,8 @@ package me.scholagate.app.dtos
 
 import com.google.gson.Gson
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 data class AlumnoDto(
     var id: Int = -1,
@@ -15,4 +17,7 @@ data class AlumnoDto(
         return LocalDate.now().year - fechaNac.year >= 18
     }
 
+    fun fechaToString(): String {
+        return LocalDate.parse(this.fechaNac).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    }
 }

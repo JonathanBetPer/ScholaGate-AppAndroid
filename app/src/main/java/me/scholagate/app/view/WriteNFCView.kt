@@ -45,8 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 fun WriteNFCView(navController: NavHostController, scholaGateViewModel: ScholaGateViewModel,) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { MainTitle(title = "NFC Writer",
-                color = MaterialTheme.colorScheme.onPrimary ) },
+            TopAppBar(title = { MainTitle(title = "NFC Writer") },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceTint
                 ),
@@ -92,10 +91,10 @@ fun ContentWriteNFC(
     val showDialigCanceler = remember { mutableStateOf(false) }
     val selectedAlumno = remember { mutableStateOf<AlumnoDto?>(null) }
     val selectedGrupo = remember { mutableStateOf<String?>(null) }
+    val refreshList = remember { mutableStateOf(0) }
 
 
     if (scholaGateViewModel.uiNfcViewState.collectAsState().value.NFCState == NFCState.SuccessWrite) {
-        showDialog.value = false
         showDialog.value = false
         selectedAlumno.value = null
         selectedGrupo.value = null
@@ -128,27 +127,6 @@ fun ContentWriteNFC(
 
         SpaceV()
 
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ){
-            items(listaAlumnosFiltrada){
-                item -> MiniCardAlumno(item, listaGrupos[item.idGrupo]?:"Sin grupo")
-                {
-                    selectedAlumno.value = item
-                    selectedGrupo.value = listaGrupos[item.idGrupo]
-                    showDialog.value = true
-
-                    scholaGateViewModel.updateNFCState(
-                        scholaGateViewModel.uiNfcViewState.value.copy(
-                            NFCState = NFCState.ReadyToWrite(selectedAlumno.value!!),
-                            alumno = selectedAlumno.value!!
-                        )
-                    )
-                }
-            }
-        }
-
         if (showDialog.value) {
 
             Dialog(onDismissRequest = { showDialigCanceler.value = true }) {
@@ -163,15 +141,39 @@ fun ContentWriteNFC(
                     onConfirmation = {
                         showDialigCanceler.value = false
                         showDialog.value = false
+                        refreshList.value++
                     },
-                dialogTitle = "¿Quieres cancelar la selección?")
+                    dialogTitle = "¿Quieres cancelar la selección?")
             }
-
         }else{
             scholaGateViewModel.uiNfcViewState.collectAsState().value.copy(
                 NFCState = NFCState.None,
                 alumno = AlumnoDto()
             )
+        }
+
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ){
+
+            items(listaAlumnosFiltrada, key = { item -> item.id + refreshList.value })
+            {
+                item -> MiniCardAlumno(item, listaGrupos[item.idGrupo]?:"Sin grupo", showDialog.value)
+                {
+                    selectedAlumno.value = item
+                    selectedGrupo.value = listaGrupos[item.idGrupo]
+                    showDialog.value = true
+
+                    scholaGateViewModel.updateNFCState(
+                        scholaGateViewModel.uiNfcViewState.value.copy(
+                            NFCState = NFCState.ReadyToWrite(selectedAlumno.value!!),
+                            alumno = selectedAlumno.value!!
+                        )
+                    )
+                }
+
+            }
         }
     }
 }

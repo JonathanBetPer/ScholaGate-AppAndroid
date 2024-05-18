@@ -9,7 +9,7 @@ data class ReporteDto(
     val idUsuario: Int = -1,
     var tipo: String = "",
     val motivo: String = "",
-    val fecha: Instant = Instant.now(),
+    val fecha: String = Instant.now().toString(),
 ){
     fun setEntrada() {
         this.tipo = "Entrada"

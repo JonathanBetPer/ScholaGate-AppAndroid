@@ -193,7 +193,7 @@ class ScholaGateViewModel @Inject constructor(
             if (result != null) {
                 _reporte = result
             } else {
-                Log.e("Error", "No se pudo obtener el alumno")
+                Log.e("Error", "No se pudo enviar el reporte")
             }
             return@launch
         }

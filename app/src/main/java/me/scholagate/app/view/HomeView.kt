@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -30,6 +30,8 @@ import me.scholagate.app.components.LoadingApp
 import me.scholagate.app.components.MainTitle
 import me.scholagate.app.components.ShowLoading
 import me.scholagate.app.states.HomeState
+import me.scholagate.app.ui.theme.SgAzulOscuro
+import me.scholagate.app.ui.theme.SgGris
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,14 +63,14 @@ fun HomeView(
 
             Scaffold(
                 topBar = {
-                    TopAppBar(title = { MainTitle(title = "Bienvenido ${scholaGateViewModel._usuario.nombre}",
-                        color = MaterialTheme.colorScheme.onPrimary ) },
+                    TopAppBar(title = { MainTitle(title = "Bienvenido ${scholaGateViewModel._usuario.nombre}") },
                         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceTint
+                            containerColor = SgGris
                         ),
                         actions = {
                             Button(
-                                onClick = { showDialog.value = true }
+                                onClick = { showDialog.value = true },
+                                colors = ButtonDefaults.textButtonColors(contentColor = SgAzulOscuro)
                             ){
                                 Icon(
                                     imageVector = ImageVector.vectorResource(id = R.drawable.baseline_logout_24),

@@ -73,6 +73,8 @@ fun NavManager(
                         )
                     )
 
+                    scholaGateViewModel.onValueIdAlumno(-1)
+
                     HomeView(navController, scholaGateViewModel)
                 }
 
