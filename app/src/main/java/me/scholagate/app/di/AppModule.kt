@@ -17,13 +17,27 @@ import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import javax.net.ssl.*
 
+/**
+ * Módulo de Dagger Hilt que provee las dependencias de la aplicación.
+ *
+ * @since 18/05/2024
+ * @version 1.0
+ * @autor JonathanBetPer
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    /**
+     * Proporciona una instancia de Retrofit con todas las configuraciones necesarias.
+     * Esta instancia se proporciona como un Singleton en el ámbito de la aplicación.
+     *
+     * @return Retrofit La instancia de Retrofit.
+     */
     @Singleton
     @Provides
     fun providesRetrofit(): Retrofit {
+        // Crear un TrustManager que no valide los certificados SSL.
         val trustAllCerts = arrayOf<TrustManager>(
             object : X509TrustManager {
                 @Throws(CertificateException::class)
@@ -50,7 +64,6 @@ object AppModule {
 
         val okHttpClient = builder.build()
 
-
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
@@ -58,12 +71,27 @@ object AppModule {
             .build()
     }
 
+    /**
+     * Proporciona una instancia de ScholaGateAPI.
+     * Esta instancia se proporciona como un Singleton en el ámbito de la aplicación.
+     *
+     * @param retrofit La instancia de Retrofit.
+     * @return ScholaGateAPI La instancia de ScholaGateAPI.
+     */
     @Singleton
     @Provides
     fun provideScholaGateAPI(retrofit: Retrofit): ScholaGateAPI {
         return retrofit.create(ScholaGateAPI::class.java)
     }
 
+
+    /**
+     * Proporciona una instancia de StoreCredenciales.
+     * Esta instancia se proporciona como un Singleton en el ámbito de la aplicación.
+     *
+     * @param context El contexto de la aplicación.
+     * @return StoreCredenciales La instancia de StoreCredenciales.
+     */
     @Singleton
     @Provides
     fun provideStoreCredenciales(@ApplicationContext context: Context): StoreCredenciales {

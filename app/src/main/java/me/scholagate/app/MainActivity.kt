@@ -14,16 +14,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.launch
-import me.scholagate.app.datastore.StoreCredenciales
-import me.scholagate.app.dtos.AlumnoDto
 import me.scholagate.app.navigation.NavManager
 import me.scholagate.app.nfc.NfcManager
 import me.scholagate.app.states.NFCState
@@ -31,6 +24,15 @@ import me.scholagate.app.ui.theme.ScholaGateTheme
 import me.scholagate.app.ui.theme.SgGris
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
+
+/**
+ * MainActivity
+ * Clase principal de la aplicación ScholaGate
+ *
+ * @since 18/05/2024
+ * @version 1.0
+ * @author JonathanBetPer
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 

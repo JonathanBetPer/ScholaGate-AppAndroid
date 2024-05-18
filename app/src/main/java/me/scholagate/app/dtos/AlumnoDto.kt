@@ -1,10 +1,17 @@
 package me.scholagate.app.dtos
 
-import com.google.gson.Gson
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * Clase que representa un alumno en la aplicación.
+ *
+ * @property id El id del alumno.
+ * @property idGrupo El id del grupo al que pertenece el alumno.
+ * @property nombre El nombre del alumno.
+ * @property fechaNac La fecha de nacimiento del alumno.
+ * @property foto La foto del alumno.
+ */
 data class AlumnoDto(
     var id: Int = -1,
     var idGrupo: Int = -1,

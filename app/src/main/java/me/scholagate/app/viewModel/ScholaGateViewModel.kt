@@ -30,6 +30,9 @@ import me.scholagate.app.states.UiLoginViewState
 import me.scholagate.app.states.UiNFCViewState
 import javax.inject.Inject
 
+/**
+ * ViewModel de la aplicación ScholaGate.
+ */
 @HiltViewModel
 class ScholaGateViewModel @Inject constructor(
     private val repository: SGRepository,
@@ -68,9 +71,6 @@ class ScholaGateViewModel @Inject constructor(
     )
     val uiAppState = _uiAppState.asStateFlow()
 
-    fun updateAppState(newAppState: UiAppState) {
-        _uiAppState.value = newAppState
-    }
 
     private var _uiLoginViewState = MutableStateFlow(
         UiLoginViewState(
@@ -125,12 +125,14 @@ class ScholaGateViewModel @Inject constructor(
     fun onValueIdAlumno(value: Int) = run { _idAlumno = value }
 
 
-
     var _listaAlumnos by mutableStateOf(listOf<AlumnoDto>())
         private set
 
     var _listaGrupos by mutableStateOf(mapOf<Int, String>())
         private set
+
+
+
 
     fun fetchLogin(email: String, password: String) {
 
@@ -220,6 +222,8 @@ class ScholaGateViewModel @Inject constructor(
             }
         }
     }
+
+
 
     fun logout() {
 

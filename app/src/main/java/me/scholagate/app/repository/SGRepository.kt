@@ -9,9 +9,16 @@ import me.scholagate.app.dtos.ReporteDto
 import me.scholagate.app.dtos.UsuarioDto
 import javax.inject.Inject
 
+/**
+ * Clase que representa el repositorio de la aplicación.
+ * Contiene los métodos para interactuar con la API de ScholaGate.
+ *
+ * @property api La API de ScholaGate.
+ */
 class SGRepository @Inject constructor(
     private val api: ScholaGateAPI
 )   {
+
     suspend fun login(email: String, password: String): String? {
         try {
             val responseApi = api.login( CredencialesDto(email, password) )

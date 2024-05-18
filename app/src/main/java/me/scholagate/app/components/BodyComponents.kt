@@ -50,11 +50,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.protobuf.Internal.BooleanList
 import me.scholagate.app.R
 import me.scholagate.app.dtos.AlumnoDto
 import kotlin.random.Random
 
+/**
+ * Componentes de la aplicación ScholaGate
+ * @since 18/05/2024
+ * @version 1.0
+ * @author JonathanBetPer
+ */
 @Composable
 fun SpaceV(size: Dp = 5.dp){
     Spacer(modifier = Modifier.height(size))

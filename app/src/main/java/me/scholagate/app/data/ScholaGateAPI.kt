@@ -20,6 +20,12 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
+/**
+ * Interfaz que define los métodos de la API de ScholaGate
+ * @since 18/05/2024
+ * @version 1.0
+ * @autor JonathanBetPer
+ */
 interface ScholaGateAPI {
 
     @GET(ENDPOINT_USUARIO)

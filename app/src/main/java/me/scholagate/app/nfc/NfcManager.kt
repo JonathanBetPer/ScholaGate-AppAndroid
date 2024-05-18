@@ -1,23 +1,24 @@
 package me.scholagate.app.nfc
 
-import android.content.ContentValues
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.Ndef
-import android.nfc.tech.NdefFormatable
 import android.util.Log
-import android.widget.Toast
-import me.scholagate.app.dtos.AlumnoDto
 import java.io.IOException
 import java.nio.charset.Charset
-import javax.crypto.Cipher
-import javax.crypto.SecretKey
-import javax.crypto.spec.IvParameterSpec
 
+/**
+ * Clase que se encarga de manejar la lectura y escritura de tags NFC.
+ */
 class NfcManager {
+
+    /**
+     * Lee el contenido de un tag NFC.
+     * @param intent El intent que contiene el tag NFC.
+     */
     fun readTag(intent: Intent): String? {
             val rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
             if (rawMessages != null) {
@@ -35,6 +36,12 @@ class NfcManager {
         return null
     }
 
+    /**
+     * Escribe un texto en un tag NFC.
+     * @param tag El tag NFC.
+     * @param text El texto a escribir.
+     * @return true si se escribió el tag, false en caso contrario.
+     */
     fun writeTag(tag: Tag?, text: String): Boolean {
 
         val languageCode = "es"

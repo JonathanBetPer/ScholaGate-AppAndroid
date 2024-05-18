@@ -6,16 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import me.scholagate.app.components.LoadingApp
-import me.scholagate.app.datastore.StoreCredenciales
 import me.scholagate.app.dtos.AlumnoDto
-import me.scholagate.app.dtos.CredencialesDto
 import me.scholagate.app.dtos.UsuarioDto
 import me.scholagate.app.states.AppState
 import me.scholagate.app.states.HomeState
@@ -23,6 +15,11 @@ import me.scholagate.app.states.NFCState
 import me.scholagate.app.view.*
 import me.scholagate.app.viewModel.ScholaGateViewModel
 
+/**
+ * Clase que se encarga de manejar la navegación de la aplicación.
+ *
+ * @param scholaGateViewModel El ViewModel de la aplicación.
+ */
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun NavManager(

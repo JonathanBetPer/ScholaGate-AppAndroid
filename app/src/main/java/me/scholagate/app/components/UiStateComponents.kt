@@ -34,6 +34,12 @@ import androidx.compose.ui.window.DialogProperties
 import me.scholagate.app.R
 import me.scholagate.app.ui.theme.SgGris
 
+/**
+ *  Componentes de la interfaz que contienen Animaciones o están relacionados con cambios de State
+ *  @since 18/05/2024
+ *  @version 1.0
+ *  @autor JonathanBetPer
+ */
 @Composable
 fun ShowLoading(){
     Dialog(
