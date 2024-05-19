@@ -96,6 +96,7 @@ fun ContentRegistro(
     val tipoRegistro = remember { mutableStateOf(true) }
     val motivoValue = remember { mutableStateOf("") }
     val errorMotivo = remember { mutableStateOf(false) }
+    val errorAlumno = remember { mutableStateOf(false) }
     val listaAlumnos = scholaGateViewModel._listaAlumnos
     val listaGrupos = scholaGateViewModel._listaGrupos
     val selectedAlumno = remember { mutableStateOf<AlumnoDto?>(null) }
@@ -162,7 +163,7 @@ fun ContentRegistro(
                 }
 
             } else {
-                MiniNFCAnimacion()
+                MiniNFCAnimacion(errorAlumno.value)
             }
 
             TextFieldGenerico(
@@ -203,6 +204,7 @@ fun ContentRegistro(
                     enabled = true,
                     onClick = {
                         errorMotivo.value = motivoValue.value.isEmpty()
+                        errorAlumno.value = selectedAlumno.value == null
 
                         if (motivoValue.value.isNotEmpty() && selectedAlumno.value != null) {
 
@@ -220,7 +222,7 @@ fun ContentRegistro(
 
                             if (scholaGateViewModel._reporte.id != 0L) {
                                 Toast.makeText(navController.context, "Reporte Guardado", Toast.LENGTH_SHORT).show()
-                                //navController.popBackStack()
+                                navController.popBackStack()
                             }
                         }
                     }

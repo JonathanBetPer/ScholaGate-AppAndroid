@@ -33,6 +33,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import me.scholagate.app.R
 import me.scholagate.app.ui.theme.SgGris
+import me.scholagate.app.ui.theme.SgRojoPastel
 
 /**
  *  Componentes de la interfaz que contienen Animaciones o están relacionados con cambios de State
@@ -118,7 +119,28 @@ fun LectorNFCAnimacion(pad: PaddingValues, colorBackgroud: Color = MaterialTheme
 }
 
 @Composable
-fun MiniNFCAnimacion(){
+fun MiniNFCAnimacion(isErrors: Boolean){
+
+    val alpha2 = remember { Animatable(0f) } // Empieza completamente transparente
+
+    LaunchedEffect(key1 = isErrors) {
+        while (isErrors) {
+            alpha2.animateTo(
+                targetValue = 0.8f,
+                animationSpec = tween(
+                    durationMillis = 2500, // Duración de la animación en milisegundos
+                    easing = LinearEasing // Tipo de interpolación
+                )
+            )
+            alpha2.animateTo(
+                targetValue = 0.15f,
+                animationSpec = tween(
+                    durationMillis = 2500, // Duración de la animación en milisegundos
+                    easing = LinearEasing
+                )
+            )
+        }
+    }
 
     val alpha = remember { Animatable(0f) } // Empieza completamente transparente
 
@@ -147,7 +169,8 @@ fun MiniNFCAnimacion(){
             .size(115.dp)
             .border(5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(25.dp))
             .clip(RoundedCornerShape(25.dp))
-            .padding(8.dp),
+            .padding(10.dp)
+            .background(SgRojoPastel.copy(alpha = alpha2.value), RoundedCornerShape(25.dp)),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
         ) {
