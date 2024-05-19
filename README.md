@@ -12,9 +12,9 @@ Esta una aplicación Android desarrollada en Kotlin, parte del proyecto final, q
 - Uso de NFC Tags para identificar al alumando
 
 
-## Requisitos
+## Requisitos del entorno de trabajo
 
-- Android Studio Arctic Fox | 2020.3.1 o superior.
+- Android Studio Jellyfish | 2023.3.1 o superior
 - JDK 8.
 - Un dispositivo Android o emulador con API 26 (Android 8.0) o superior.
 
