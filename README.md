@@ -9,7 +9,7 @@ Esta una aplicación Android desarrollada en Kotlin, parte del proyecto final, q
 
 - Inicio de sesión y autenticación de usuarios con JWT.
 - Generación de reportes de entrada y salida del alumnado.
-- Uso de NFC Tags para identificar al alumando
+- Uso de NFC Tags para identificar al alumnado
 
 
 ## Requisitos del entorno de trabajo
